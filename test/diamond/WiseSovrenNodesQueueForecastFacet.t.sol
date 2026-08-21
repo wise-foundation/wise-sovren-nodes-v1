@@ -42,6 +42,44 @@ contract MockUSD is ERC20 {
 }
 
 /**
+ * @dev Inherit-harness that writes queue entries straight into
+ * storage, so the lane walk can be pointed at an order with a zero
+ * amount. That state is unreachable through the public surface (a
+ * full fulfill unlinks the order, a partial fulfill cannot take the
+ * whole remainder, and a reduction must leave the minimum deposit),
+ * so the skip inside the lane walk is a defensive guard and this is
+ * the only way to exercise it.
+ */
+contract ForecastHarness is QueueForecastFacet {
+
+    function harnessSeedOrder(
+        uint256 _id,
+        int256 _incentive,
+        uint256 _amount,
+        uint256 _headPointer
+    )
+        external
+    {
+        QueMemberByIdAndIncentive[_id][_incentive].member = address(0xA1);
+        QueMemberByIdAndIncentive[_id][_incentive].amount = _amount;
+        QueMemberByIdAndIncentive[_id][_incentive].headPointer = _headPointer;
+    }
+
+    function harnessSeedLane(
+        int256 _incentive,
+        uint256 _cursor,
+        uint256 _laneEnd,
+        uint256 _activeOrders
+    )
+        external
+    {
+        currentOrderIdByIncentive[_incentive] = _cursor;
+        earliestValidQueMemberByIncentive[_incentive] = _laneEnd;
+        totalActiveOrders = _activeOrders;
+    }
+}
+
+/**
  * @dev Exercises {QueueForecastFacet}. The load-bearing property is
  * differential: `solveForAmountAfterFulfill(x, y)` quoted BEFORE any
  * fill must equal `solveForAmount(y)` quoted AFTER a real
@@ -472,5 +510,47 @@ contract WiseSovrenNodesQueueForecastFacetTest is DiamondTestHarness {
             _x,
             _y
         );
+    }
+
+    function test_forecastLane_zeroAmountOrder_isSkipped()
+        public
+    {
+        ForecastHarness harness = new ForecastHarness();
+
+        harness.harnessSeedOrder(
+            0,
+            0,
+            0,
+            1
+        );
+
+        harness.harnessSeedOrder(
+            1,
+            0,
+            100 * 1e6,
+            2
+        );
+
+        harness.harnessSeedLane(
+            0,
+            0,
+            2,
+            1
+        );
+
+        (
+            int256[] memory incentives,
+            uint256[] memory orders,
+            uint256[] memory orderAmounts,
+            ,
+        ) = harness.solveForAmountAfterFulfill(
+            0,
+            100 * 1e6
+        );
+
+        assertEq(incentives.length, 1);
+        assertEq(orders.length, 1);
+        assertEq(orders[0], 1);
+        assertEq(orderAmounts[0], 100 * 1e6);
     }
 }

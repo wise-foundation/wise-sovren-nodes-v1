@@ -27,9 +27,9 @@ import {WiseSovrenNodesQueueHelper} from "../../src/diamond/vault/helpers/WiseSo
  * cannot drift.
  *
  * Counts: admin=27, proxy=3, user=8, sweep=2, cashedInterest=1,
- * queueForecast=1, interestAdmin=1, rescue=1, burnWise=3, move=7,
+ * queueForecast=1, interestAdmin=3, rescue=1, burnWise=3, move=7,
  * bridge=14, permit2=3, multicall=1, queueAdmin=2, queueJoinLeave=5,
- * queueFulfill=4, queueView=10 — total 93, all wired at genesis.
+ * queueFulfill=4, queueView=10 — total 95, all wired at genesis.
  */
 library WiseSovrenNodesDiamondSelectors {
 
@@ -128,8 +128,10 @@ library WiseSovrenNodesDiamondSelectors {
         pure
         returns (bytes4[] memory sels)
     {
-        sels = new bytes4[](1);
+        sels = new bytes4[](3);
         sels[0] = InterestAdminFacet.setCashedInterest.selector;
+        sels[1] = InterestAdminFacet.setCashedInterestBulk.selector;
+        sels[2] = InterestAdminFacet.syncInterestBulk.selector;
     }
 
     function rescueSelectors()

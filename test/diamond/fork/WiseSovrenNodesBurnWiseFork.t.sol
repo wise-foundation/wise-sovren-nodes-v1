@@ -6,18 +6,18 @@ import {Test} from "forge-std/Test.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import {WiseSovrenNodesDiamond} from "../../src/diamond/vault/WiseSovrenNodesDiamond.sol";
-import {WiseSovrenNodesInitParams} from "../../src/diamond/vault/WiseSovrenNodesDiamondStructs.sol";
-import {AdminFacet} from "../../src/diamond/vault/facets/AdminFacet.sol";
-import {ProxyFacet} from "../../src/diamond/vault/facets/ProxyFacet.sol";
-import {UserFacet} from "../../src/diamond/vault/facets/UserFacet.sol";
-import {SweepFacet} from "../../src/diamond/vault/facets/SweepFacet.sol";
-import {BurnWiseFacet} from "../../src/diamond/vault/facets/BurnWiseFacet.sol";
+import {WiseSovrenNodesDiamond} from "../../../src/diamond/vault/WiseSovrenNodesDiamond.sol";
+import {WiseSovrenNodesInitParams} from "../../../src/diamond/vault/WiseSovrenNodesDiamondStructs.sol";
+import {AdminFacet} from "../../../src/diamond/vault/facets/AdminFacet.sol";
+import {ProxyFacet} from "../../../src/diamond/vault/facets/ProxyFacet.sol";
+import {UserFacet} from "../../../src/diamond/vault/facets/UserFacet.sol";
+import {SweepFacet} from "../../../src/diamond/vault/facets/SweepFacet.sol";
+import {BurnWiseFacet} from "../../../src/diamond/vault/facets/BurnWiseFacet.sol";
 
-import {WiseSovrenNodesDiamondErrors} from "../../src/diamond/vault/WiseSovrenNodesDiamondErrors.sol";
-import {OnlyDelegateCall} from "../../src/diamond/shared/DiamondErrors.sol";
+import {WiseSovrenNodesDiamondErrors} from "../../../src/diamond/vault/WiseSovrenNodesDiamondErrors.sol";
+import {OnlyDelegateCall} from "../../../src/diamond/shared/DiamondErrors.sol";
 
-import {WiseSovrenNodesDiamondSelectors} from "../../script/diamond/WiseSovrenNodesDiamondSelectors.sol";
+import {WiseSovrenNodesDiamondSelectors} from "../../../script/diamond/WiseSovrenNodesDiamondSelectors.sol";
 
 interface IUniswapV2Router {
 
@@ -71,7 +71,7 @@ contract MockUSD is ERC20 {
  * WISE token's own totalSupply too), then drives `burnWise()`
  * from a random EOA so the permissionless surface is exercised.
  */
-contract WiseSovrenNodesBurnWiseFacetTest is Test {
+contract WiseSovrenNodesBurnWiseForkTest is Test {
 
     address constant WISE_TOKEN = 0x66a0f676479Cee1d7373f3DC2e2952778BfF5bd6;
     address constant UNISWAP_V2_ROUTER = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;

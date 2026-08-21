@@ -200,6 +200,11 @@ abstract contract WiseSovrenNodesDiamondEvents {
         uint256 newAmount
     );
 
+    event InterestSynced(
+        address indexed user,
+        uint256 syncedAt
+    );
+
     event TokenRescued(
         address indexed token,
         address indexed to,
