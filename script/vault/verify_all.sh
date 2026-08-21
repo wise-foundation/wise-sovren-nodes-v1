@@ -6,7 +6,7 @@
 #
 # Facets are top-level CREATEs and are normally covered by forge's
 # in-run --verify, but that silently misses on --skip-simulation chains
-# (Arbitrum) and lagging explorers, so this backfill re-submits every
+# on some chains, and on lagging explorers, so this backfill re-submits every
 # facet from the deploy broadcast by exact (name, address). Idempotent:
 # an already-verified contract just reports "already verified".
 #

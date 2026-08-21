@@ -17,10 +17,10 @@ import {WiseSovrenNodesInitParams} from "../../src/diamond/vault/WiseSovrenNodes
 /// manifest deploy dormant (deposit gate closed, everything else fully wired). Preflight aborts
 /// before any broadcast if CreateX or Permit2 are missing, the predicted address deviates from
 /// the manifest canonical, or the canonical slot already has code. A zero thirdParty/worker in
-/// the config means the broadcasting deployer is used (both master-changeable afterwards). For
-/// the usdg product the deposit forward (thirdParty) is forced to the worker address — the
-/// overhang-sweep receiver — and a conflicting non-zero config value aborts the deploy. The
-/// diamond is left un-finalized: follow with {RegisterCrossChainPeers} then {FinalizeVault}.
+/// the config means the broadcasting deployer is used (both master-changeable afterwards). Once
+/// ownership is claimed the premium incentive lanes are opened, which cannot happen inside the
+/// shim's own transaction without exceeding the single-transaction gas ceiling. The diamond is
+/// left un-finalized: follow with {RegisterCrossChainPeers} then {FinalizeVault}.
 contract DeployVaultDeterministic is DeployWiseSovrenNodesDiamond, VaultConfig {
 
     struct DeployCfg {

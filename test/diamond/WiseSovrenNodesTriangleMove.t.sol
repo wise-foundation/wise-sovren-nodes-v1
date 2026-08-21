@@ -45,9 +45,10 @@ contract MockUSD6 is ERC20 {
 }
 
 /**
- * @dev Proves the three-product single-chain posture (usdc / usdt /
- * usdg vaults on mainnet or arbitrum) supports free user movement:
- * three 6-decimal diamonds are deployed on one chain and
+ * @dev Proves that several products sharing a chain support free
+ * user movement between them, which is what the same-chain peer
+ * registry exists for: three 6-decimal diamonds are deployed on one
+ * chain and
  * cross-registered as peers in every ordered direction via the
  * timelocked propose/execute flow, then a user round-trips the full
  * triangle. Every leg must relocate `totalDepositCap` with the moved
@@ -56,7 +57,7 @@ contract MockUSD6 is ERC20 {
  * unchanged on both ends — and the full six-direction round trip
  * must return every cap exactly to its genesis value (the A->B->A
  * over-mint regression at triangle scale). Also proves the
- * dormant-chain gate (`depositsDisabled`, the shipped usdg posture)
+ * dormant-chain gate (`depositsDisabled`, the posture a chain ships in)
  * blocks direct deposits but never a move in either direction, that
  * pending interest is banked into `cashedInterest` on the source on
  * the way out, and that a missing registration on either side of a
@@ -492,7 +493,7 @@ contract WiseSovrenNodesTriangleMoveTest is Test {
         );
     }
 
-    // ---- Dormant vault (usdg posture): moves pass, deposits blocked ----
+    // ---- Dormant vault: moves pass, deposits blocked ----
 
     function test_triangle_dormantVault_blocksDepositButMovesFreely()
         public
