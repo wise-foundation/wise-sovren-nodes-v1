@@ -107,7 +107,7 @@ contract MoveOutPropertiesTest is Test {
         params.interestRate = 2_000;
         params.decimalsValue = 6;
         params.tokenName = "Wise Sovren Nodes";
-        params.tokenSymbol = "WTN";
+        params.tokenSymbol = "wsnUSDC";
     }
 
     /**

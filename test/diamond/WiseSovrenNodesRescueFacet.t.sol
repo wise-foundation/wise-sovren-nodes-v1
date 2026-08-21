@@ -13,8 +13,6 @@ import {WiseSovrenNodesDiamondErrors} from "../../src/diamond/vault/WiseSovrenNo
 import {NotMaster} from "../../src/diamond/shared/OwnableMaster.sol";
 import {OnlyDelegateCall} from "../../src/diamond/shared/DiamondErrors.sol";
 
-import {WiseSovrenNodesDiamondSelectors} from "../../script/diamond/WiseSovrenNodesDiamondSelectors.sol";
-
 contract MockUSD is ERC20 {
 
     constructor()
@@ -133,12 +131,6 @@ contract WiseSovrenNodesRescueFacetTest is DiamondTestHarness {
         );
 
         rescueFacetInstance = new RescueFacet();
-
-        _wireOne(
-            diamond,
-            address(rescueFacetInstance),
-            WiseSovrenNodesDiamondSelectors.rescueSelectors()
-        );
 
         diamond.finalizeSetup();
 

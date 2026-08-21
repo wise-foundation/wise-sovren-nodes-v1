@@ -122,7 +122,7 @@ contract WiseSovrenNodesBurnWiseFacetTest is Test {
             interestRate: INTEREST_RATE,
             decimalsValue: 6,
             tokenName: "Wise Sovren Nodes",
-            tokenSymbol: "WTN"
+            tokenSymbol: "wsnUSDC"
         });
     }
 

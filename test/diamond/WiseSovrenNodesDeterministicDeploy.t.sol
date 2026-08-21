@@ -379,7 +379,7 @@ contract WiseSovrenNodesDeterministicDeployTest is Test, DeployWiseSovrenNodesDi
 
         bytes32 salt = makeSalt(
             deployer,
-            bytes11("WTN-USDC-01")
+            bytes11("WSN-USDC-01")
         );
 
         assertEq(
@@ -394,7 +394,7 @@ contract WiseSovrenNodesDeterministicDeployTest is Test, DeployWiseSovrenNodesDi
 
         assertEq(
             bytes11(salt << 168),
-            bytes11("WTN-USDC-01")
+            bytes11("WSN-USDC-01")
         );
 
         guardedSalt(
@@ -410,7 +410,7 @@ contract WiseSovrenNodesDeterministicDeployTest is Test, DeployWiseSovrenNodesDi
 
         bytes32 foreign = makeSalt(
             address(0xBAD),
-            bytes11("WTN-USDC-01")
+            bytes11("WSN-USDC-01")
         );
 
         vm.expectRevert(
@@ -424,7 +424,7 @@ contract WiseSovrenNodesDeterministicDeployTest is Test, DeployWiseSovrenNodesDi
 
         bytes32 protected = makeSalt(
             deployer,
-            bytes11("WTN-USDC-01")
+            bytes11("WSN-USDC-01")
         ) | bytes32(
             uint256(0xFF) << 88
         );

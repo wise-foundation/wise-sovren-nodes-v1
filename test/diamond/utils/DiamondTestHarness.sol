@@ -19,6 +19,9 @@ import {QueueAdminFacet} from "../../../src/diamond/vault/facets/QueueAdminFacet
 import {QueueJoinLeaveFacet} from "../../../src/diamond/vault/facets/QueueJoinLeaveFacet.sol";
 import {QueueFulfillFacet} from "../../../src/diamond/vault/facets/QueueFulfillFacet.sol";
 import {QueueViewFacet} from "../../../src/diamond/vault/facets/QueueViewFacet.sol";
+import {QueueForecastFacet} from "../../../src/diamond/vault/facets/QueueForecastFacet.sol";
+import {InterestAdminFacet} from "../../../src/diamond/vault/facets/InterestAdminFacet.sol";
+import {RescueFacet} from "../../../src/diamond/vault/facets/RescueFacet.sol";
 
 import {WiseSovrenNodesDiamondSelectors} from "../../../script/diamond/WiseSovrenNodesDiamondSelectors.sol";
 
@@ -55,8 +58,22 @@ abstract contract DiamondTestHarness is Test {
         internal
         returns (WiseSovrenNodesDiamond d)
     {
-        d = _newDiamond(
-            _usd
+        d = _deployDiamondAtRate(
+            _usd,
+            INTEREST_RATE
+        );
+    }
+
+    function _deployDiamondAtRate(
+        address _usd,
+        uint256 _rate
+    )
+        internal
+        returns (WiseSovrenNodesDiamond d)
+    {
+        d = _newDiamondWithRate(
+            _usd,
+            _rate
         );
 
         _wireAllFacets(
@@ -72,8 +89,22 @@ abstract contract DiamondTestHarness is Test {
         internal
         returns (WiseSovrenNodesDiamond d)
     {
-        d = _newDiamond(
-            _usd
+        d = _deployDiamondWithQueueAtRate(
+            _usd,
+            INTEREST_RATE
+        );
+    }
+
+    function _deployDiamondWithQueueAtRate(
+        address _usd,
+        uint256 _rate
+    )
+        internal
+        returns (WiseSovrenNodesDiamond d)
+    {
+        d = _newDiamondWithRate(
+            _usd,
+            _rate
         );
 
         _wireAllFacets(
@@ -93,6 +124,19 @@ abstract contract DiamondTestHarness is Test {
         internal
         returns (WiseSovrenNodesDiamond d)
     {
+        d = _newDiamondWithRate(
+            _usd,
+            INTEREST_RATE
+        );
+    }
+
+    function _newDiamondWithRate(
+        address _usd,
+        uint256 _rate
+    )
+        internal
+        returns (WiseSovrenNodesDiamond d)
+    {
         _ensurePermit2();
 
         d = new WiseSovrenNodesDiamond(
@@ -104,10 +148,10 @@ abstract contract DiamondTestHarness is Test {
                 initialDistributionAddresses: new address[](0),
                 initialDistributionAmounts: new uint256[](0),
                 totalDepositCap: TOTAL_DEPOSIT_CAP,
-                interestRate: INTEREST_RATE,
+                interestRate: _rate,
                 decimalsValue: DEFAULT_DECIMALS,
                 tokenName: "Wise Sovren Nodes",
-                tokenSymbol: "WTN"
+                tokenSymbol: "wsnUSDC"
             })
         );
     }
@@ -170,6 +214,18 @@ abstract contract DiamondTestHarness is Test {
             address(new MulticallFacet()),
             WiseSovrenNodesDiamondSelectors.multicallSelectors()
         );
+
+        _wireOne(
+            d,
+            address(new InterestAdminFacet()),
+            WiseSovrenNodesDiamondSelectors.interestAdminSelectors()
+        );
+
+        _wireOne(
+            d,
+            address(new RescueFacet()),
+            WiseSovrenNodesDiamondSelectors.rescueSelectors()
+        );
     }
 
     function _wireQueueFacets(
@@ -199,6 +255,12 @@ abstract contract DiamondTestHarness is Test {
             d,
             address(new QueueViewFacet()),
             WiseSovrenNodesDiamondSelectors.queueViewSelectors()
+        );
+
+        _wireOne(
+            d,
+            address(new QueueForecastFacet()),
+            WiseSovrenNodesDiamondSelectors.queueForecastSelectors()
         );
     }
 

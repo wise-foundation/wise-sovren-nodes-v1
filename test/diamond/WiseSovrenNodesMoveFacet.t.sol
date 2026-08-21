@@ -194,7 +194,7 @@ contract WiseSovrenNodesMoveFacetTest is Test {
                 interestRate: INTEREST_RATE,
                 decimalsValue: _decimalsValue,
                 tokenName: "Wise Sovren Nodes",
-                tokenSymbol: "WTN"
+                tokenSymbol: "wsnUSDC"
             })
         );
 

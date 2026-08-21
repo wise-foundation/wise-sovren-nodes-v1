@@ -120,7 +120,7 @@ contract BridgeHeadroomPropertiesTest is Test {
         params.interestRate = 2_000;
         params.decimalsValue = DECIMALS;
         params.tokenName = "Wise Sovren Nodes";
-        params.tokenSymbol = "WTN";
+        params.tokenSymbol = "wsnUSDC";
     }
 
     function _legacyMessage(

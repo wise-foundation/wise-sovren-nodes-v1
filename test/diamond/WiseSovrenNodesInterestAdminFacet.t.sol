@@ -15,8 +15,6 @@ import {InterestAdminFacet} from "../../src/diamond/vault/facets/InterestAdminFa
 import {WiseSovrenNodesDiamondErrors} from "../../src/diamond/vault/WiseSovrenNodesDiamondErrors.sol";
 import {NotMaster} from "../../src/diamond/shared/OwnableMaster.sol";
 
-import {WiseSovrenNodesDiamondSelectors} from "../../script/diamond/WiseSovrenNodesDiamondSelectors.sol";
-
 contract MockUSD is ERC20 {
 
     constructor()
@@ -87,12 +85,6 @@ contract WiseSovrenNodesInterestAdminFacetTest is DiamondTestHarness {
 
         _wireAllFacets(
             diamond
-        );
-
-        _wireOne(
-            diamond,
-            address(new InterestAdminFacet()),
-            WiseSovrenNodesDiamondSelectors.interestAdminSelectors()
         );
 
         diamond.finalizeSetup();

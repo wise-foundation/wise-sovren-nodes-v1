@@ -13,8 +13,6 @@ import {QueueFulfillFacet} from "../../src/diamond/vault/facets/QueueFulfillFace
 import {QueueViewFacet} from "../../src/diamond/vault/facets/QueueViewFacet.sol";
 import {QueueForecastFacet} from "../../src/diamond/vault/facets/QueueForecastFacet.sol";
 
-import {WiseSovrenNodesDiamondSelectors} from "../../script/diamond/WiseSovrenNodesDiamondSelectors.sol";
-
 contract MockUSD is ERC20 {
 
     constructor()
@@ -83,12 +81,6 @@ contract WiseSovrenNodesQueueForecastFacetTest is DiamondTestHarness {
 
         _wireQueueFacets(
             diamond
-        );
-
-        _wireOne(
-            diamond,
-            address(new QueueForecastFacet()),
-            WiseSovrenNodesDiamondSelectors.queueForecastSelectors()
         );
 
         diamond.finalizeSetup();

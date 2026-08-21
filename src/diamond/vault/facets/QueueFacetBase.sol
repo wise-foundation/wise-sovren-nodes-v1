@@ -31,7 +31,7 @@ abstract contract QueueFacetBase is WiseSovrenNodesQueueHelper {
                 initialDistributionAddresses: new address[](0),
                 initialDistributionAmounts: new uint256[](0),
                 totalDepositCap: 1,
-                interestRate: 1,
+                interestRate: 0,
                 decimalsValue: 18,
                 tokenName: "FACET",
                 tokenSymbol: "FACET"

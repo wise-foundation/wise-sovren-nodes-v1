@@ -45,6 +45,25 @@ import {InterestRemainderDeclaration} from "./InterestRemainderDeclaration.sol";
  * vault-specific shards — matching the legacy slot ordering for the
  * shared bases. USD_TOKEN sits in storage rather than `immutable`
  * because immutables don't survive DELEGATECALL into facets.
+ *
+ * A genesis `interestRate` of zero is deliberately legal. The vault
+ * launches paying nothing and master turns accrual on later with
+ * `setInterestRate`, so the rate validator rejects only a rate above
+ * `MAX_INTEREST_RATE`. Accrual is safe at zero by construction: the
+ * rate is only ever a multiplier, never a divisor, so
+ * `_assignInterest` banks nothing and merely restamps
+ * `lastSyncTimeStamp`. Note that `bufferInterestRate` starts at zero
+ * too, so during the zero-rate phase the sweep reserve is exactly
+ * `totalCashedInterest` — the whole claimable liability, since no
+ * pending accrual exists — and it ratchets up on the first rate
+ * change.
+ *
+ * Accrual is measured from each holder's own `lastSyncTimeStamp` and
+ * `setInterestRate` writes no checkpoint, so turning the rate on
+ * would otherwise pay the new rate back to a holder's last touch.
+ * Restamping every holder in the same transaction as the rate change
+ * is what makes accrual start at the flip; see the interest-admin
+ * facet for the bulk primitives that do it.
  */
 abstract contract WiseSovrenNodesDeclarations is
     WiseSovrenNodesDiamondEvents,
@@ -167,8 +186,7 @@ abstract contract WiseSovrenNodesDeclarations is
         pure
     {
         if (
-            _params.interestRate == 0
-                || _params.totalDepositCap == 0
+            _params.totalDepositCap == 0
                 || _params.usdAddress == ZERO_ADDRESS
                 || _params.thirdPartyAddress == ZERO_ADDRESS
                 || _params.workerAddress == ZERO_ADDRESS

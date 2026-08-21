@@ -226,7 +226,7 @@ contract WiseSovrenNodesAdminCoverageTest is DiamondTestHarness {
             interestRate: _rate,
             decimalsValue: DEFAULT_DECIMALS,
             tokenName: "Wise Sovren Nodes",
-            tokenSymbol: "WTN"
+            tokenSymbol: "wsnUSDC"
         });
     }
 
@@ -294,7 +294,7 @@ contract WiseSovrenNodesAdminCoverageTest is DiamondTestHarness {
 
         assertEq(
             diamond.symbol(),
-            "WTN"
+            "wsnUSDC"
         );
     }
 
@@ -586,7 +586,7 @@ contract WiseSovrenNodesAdminCoverageTest is DiamondTestHarness {
         );
     }
 
-    function test_constructor_revertsOnZeroInterestRate()
+    function test_constructor_zeroInterestRate_deploys()
         public
     {
         WiseSovrenNodesInitParams memory params = _buildParams(
@@ -599,13 +599,12 @@ contract WiseSovrenNodesAdminCoverageTest is DiamondTestHarness {
             0
         );
 
-        vm.expectRevert(
-            WiseSovrenNodesDiamondErrors.InvalidValue.selector
-        );
-
-        new WiseSovrenNodesDiamond(
+        WiseSovrenNodesDiamond zeroRate = new WiseSovrenNodesDiamond(
             params
         );
+
+        assertEq(zeroRate.interestRate(), 0);
+        assertEq(zeroRate.bufferInterestRate(), 0);
     }
 
     function test_constructor_revertsOnZeroCap()

@@ -79,7 +79,7 @@ contract InterestPropertiesTest is Test {
         params.interestRate = RATE_20_PCT;
         params.decimalsValue = 6;
         params.tokenName = "Wise Sovren Nodes";
-        params.tokenSymbol = "WTN";
+        params.tokenSymbol = "wsnUSDC";
     }
 
     // ---- PROPERTY 1: the contract never accumulates interest ----

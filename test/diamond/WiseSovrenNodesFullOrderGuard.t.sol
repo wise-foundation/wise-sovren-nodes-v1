@@ -143,7 +143,7 @@ contract WiseSovrenNodesFullOrderGuardTest is Test {
             interestRate: 2000,
             decimalsValue: 6,
             tokenName: "Wise Sovren Nodes",
-            tokenSymbol: "WTN"
+            tokenSymbol: "wsnUSDC"
         });
     }
 
