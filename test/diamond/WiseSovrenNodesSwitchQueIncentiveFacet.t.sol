@@ -656,11 +656,11 @@ contract WiseSovrenNodesSwitchQueIncentiveFacetTest is DiamondTestHarness {
             user1,
             id,
             0,
-            -100
+            -2_000
         );
 
         assertEq(
-            vault.activeOrderCountByIncentive(-100),
+            vault.activeOrderCountByIncentive(-2_000),
             1
         );
 
@@ -670,7 +670,7 @@ contract WiseSovrenNodesSwitchQueIncentiveFacetTest is DiamondTestHarness {
             ,
         ) = _order(
             0,
-            -100
+            -2_000
         );
 
         assertEq(
@@ -690,7 +690,7 @@ contract WiseSovrenNodesSwitchQueIncentiveFacetTest is DiamondTestHarness {
         uint256 id = _join(
             user1,
             100 * 1e6,
-            -100
+            -2_000
         );
 
         QueueAdminFacet(address(vault)).setNegativeIncentivesNotAllowed(
@@ -700,12 +700,12 @@ contract WiseSovrenNodesSwitchQueIncentiveFacetTest is DiamondTestHarness {
         _switch(
             user1,
             id,
-            -100,
+            -2_000,
             100
         );
 
         assertEq(
-            vault.activeOrderCountByIncentive(-100),
+            vault.activeOrderCountByIncentive(-2_000),
             0,
             "left the negative tier"
         );
@@ -1047,7 +1047,7 @@ contract WiseSovrenNodesSwitchQueIncentiveFacetTest is DiamondTestHarness {
         QueueJoinLeaveFacet(address(vault)).switchQueIncentive(
             id,
             0,
-            -100
+            -2_000
         );
     }
 
@@ -1100,7 +1100,7 @@ contract WiseSovrenNodesSwitchQueIncentiveFacetTest is DiamondTestHarness {
         QueueJoinLeaveFacet(address(vault)).switchQueIncentivePartial(
             id,
             0,
-            -100,
+            -2_000,
             50 * 1e6
         );
     }

@@ -66,7 +66,7 @@ contract QueueForecastFacet is QueueFacetBase {
             _amount
         );
 
-        int16[9] memory pos = _initializePositiveIncentivesArray();
+        int256[] memory pos = _initializePositiveIncentivesArray();
 
         for (uint256 i; i < pos.length && v.amountLeft > 0; ++i) {
             _forecastLane(
@@ -76,7 +76,7 @@ contract QueueForecastFacet is QueueFacetBase {
         }
 
         if (v.amountLeft > 0) {
-            int16[8] memory neg = _initializeNegativeIncentivesArray();
+            int256[] memory neg = _initializeNegativeIncentivesArray();
 
             for (uint256 j; j < neg.length && v.amountLeft > 0; ++j) {
                 _forecastLane(

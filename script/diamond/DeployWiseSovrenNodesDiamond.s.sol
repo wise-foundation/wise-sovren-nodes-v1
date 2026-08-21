@@ -6,6 +6,7 @@ import {Script} from "forge-std/Script.sol";
 
 import {WiseSovrenNodesDiamond} from "../../src/diamond/vault/WiseSovrenNodesDiamond.sol";
 import {WiseSovrenNodesInitParams} from "../../src/diamond/vault/WiseSovrenNodesDiamondStructs.sol";
+import {WiseSovrenNodesIncentiveLadder} from "../../src/diamond/vault/WiseSovrenNodesIncentiveLadder.sol";
 import {AdminFacet} from "../../src/diamond/vault/facets/AdminFacet.sol";
 import {ProxyFacet} from "../../src/diamond/vault/facets/ProxyFacet.sol";
 import {UserFacet} from "../../src/diamond/vault/facets/UserFacet.sol";
@@ -156,6 +157,10 @@ contract DeployWiseSovrenNodesDiamond is Script {
         );
 
         AdminFacet(address(diamond)).executeDepositHookFacetChange();
+
+        _openPremiumLanes(
+            diamond
+        );
     }
 
     /**
@@ -210,6 +215,30 @@ contract DeployWiseSovrenNodesDiamond is Script {
         }
 
         diamond.claimOwnership();
+
+        _openPremiumLanes(
+            diamond
+        );
+    }
+
+    /**
+     * @dev Opens the premium half of the incentive ladder. It cannot
+     * be seeded in the diamond's constructor: those writes would push
+     * the genesis transaction past the ceiling a single transaction
+     * may not exceed, so they land here instead, in the transaction
+     * right after ownership is claimed and well before the setup is
+     * finalised. The lanes come from the same ladder library the
+     * solver traverses.
+     */
+    function _openPremiumLanes(
+        WiseSovrenNodesDiamond _diamond
+    )
+        internal
+    {
+        QueueAdminFacet(address(_diamond)).setIncentivesAllowed(
+            WiseSovrenNodesIncentiveLadder.negativeIncentives(),
+            true
+        );
     }
 
     /**

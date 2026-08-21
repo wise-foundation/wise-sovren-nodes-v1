@@ -400,4 +400,9 @@ abstract contract WiseSovrenNodesDiamondEvents {
     event NegativeIncentivesNotAllowedSet(
         bool negativeIncentivesNotAllowed
     );
+
+    event IncentiveAllowedSet(
+        int256 indexed incentive,
+        bool allowed
+    );
 }

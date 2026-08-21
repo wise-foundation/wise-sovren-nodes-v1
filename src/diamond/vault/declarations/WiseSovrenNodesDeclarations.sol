@@ -12,6 +12,7 @@ import {OwnableMaster} from "../../shared/OwnableMaster.sol";
 import {WiseSovrenNodesDiamondEvents} from "../WiseSovrenNodesDiamondEvents.sol";
 import {WiseSovrenNodesDiamondErrors} from "../WiseSovrenNodesDiamondErrors.sol";
 import {WiseSovrenNodesInitParams} from "../WiseSovrenNodesDiamondStructs.sol";
+import {WiseSovrenNodesIncentiveLadder} from "../WiseSovrenNodesIncentiveLadder.sol";
 
 import {ConfigDeclaration} from "./ConfigDeclaration.sol";
 import {UserStateDeclaration} from "./UserStateDeclaration.sol";
@@ -64,6 +65,17 @@ import {InterestRemainderDeclaration} from "./InterestRemainderDeclaration.sol";
  * Restamping every holder in the same transaction as the rate change
  * is what makes accrual start at the flip; see the interest-admin
  * facet for the bulk primitives that do it.
+ *
+ * The constructor seeds only the discount half of the incentive
+ * ladder. The premium half is 245 further lanes, and writing them
+ * here would cost roughly 5.4 million gas inside the one transaction
+ * that also creates the diamond and wires every selector, pushing
+ * that transaction over the 16,777,216 gas ceiling a single
+ * transaction may not exceed. The premium lanes are therefore opened
+ * by the master through `setIncentivesAllowed` in a following
+ * transaction, before the setup is finalised. Both halves come from
+ * the same ladder library, so the two paths cannot describe
+ * different ladders.
  */
 abstract contract WiseSovrenNodesDeclarations is
     WiseSovrenNodesDiamondEvents,
@@ -155,24 +167,7 @@ abstract contract WiseSovrenNodesDeclarations is
     function _initializeIncentives()
         internal
     {
-        int256[] memory allowed = new int256[](17);
-        allowed[0] = 0;
-        allowed[1] = 100;
-        allowed[2] = 200;
-        allowed[3] = 300;
-        allowed[4] = 500;
-        allowed[5] = 1000;
-        allowed[6] = 1500;
-        allowed[7] = 2500;
-        allowed[8] = 5000;
-        allowed[9] = -100;
-        allowed[10] = -200;
-        allowed[11] = -300;
-        allowed[12] = -500;
-        allowed[13] = -1000;
-        allowed[14] = -1500;
-        allowed[15] = -2500;
-        allowed[16] = -5000;
+        int256[] memory allowed = WiseSovrenNodesIncentiveLadder.positiveIncentives();
 
         for (uint256 i = 0; i < allowed.length; i++) {
             incentiveAllowed[allowed[i]] = true;

@@ -107,7 +107,7 @@ abstract contract WiseSovrenNodesQueueUIHelper is WiseSovrenNodesQueueHelper {
         pure
         returns (uint256 discountedAmount)
     {
-        return _predictDiscountedAmount(
+        return _predictChargedAmount(
             _amount,
             _incentive
         );
@@ -164,7 +164,7 @@ abstract contract WiseSovrenNodesQueueUIHelper is WiseSovrenNodesQueueHelper {
         returns (uint256 tokensReceived)
     {
         uint256 remainingUsd = _costInUsd;
-        int16[9] memory incs = _initializePositiveIncentivesArray();
+        int256[] memory incs = _initializeAllIncentivesArray();
 
         for (uint256 i = 0; i < incs.length; i++) {
             if (remainingUsd == 0) {

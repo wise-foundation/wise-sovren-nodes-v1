@@ -214,14 +214,14 @@ contract WiseSovrenNodesOrdersWithIdTest is DiamondTestHarness {
             int256(1500),
             int256(2500),
             int256(5000),
-            int256(-100),
-            int256(-200),
-            int256(-300),
-            int256(-500),
-            int256(-1000),
-            int256(-1500),
-            int256(-2500),
-            int256(-5000)
+            int256(-2_000),
+            int256(-4_000),
+            int256(-6_000),
+            int256(-10_000),
+            int256(-20_000),
+            int256(-50_000),
+            int256(-100_000),
+            int256(-490_000)
         ];
 
         return tiers[_seed % 17];
@@ -498,7 +498,7 @@ contract WiseSovrenNodesOrdersWithIdTest is DiamondTestHarness {
         _join(
             user3,
             300 * 1e6,
-            -100
+            -2_000
         );
 
         _assertAll();
@@ -516,7 +516,7 @@ contract WiseSovrenNodesOrdersWithIdTest is DiamondTestHarness {
         _join(
             user1,
             150 * 1e6,
-            -100
+            -2_000
         );
 
         WiseSovrenNodesQueueStructs.QueMemberWithId[] memory mine =
@@ -635,7 +635,7 @@ contract WiseSovrenNodesOrdersWithIdTest is DiamondTestHarness {
             user1,
             id,
             100,
-            -100
+            -2_000
         );
 
         WiseSovrenNodesQueueStructs.QueMemberWithId[] memory withId =
@@ -653,7 +653,7 @@ contract WiseSovrenNodesOrdersWithIdTest is DiamondTestHarness {
 
         assertEq(
             withId[0].incentive,
-            int256(-100)
+            int256(-2_000)
         );
 
         assertEq(

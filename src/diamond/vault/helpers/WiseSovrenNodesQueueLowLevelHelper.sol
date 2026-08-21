@@ -7,6 +7,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 
 import {WiseSovrenNodesHelper} from "./WiseSovrenNodesHelper.sol";
+import {WiseSovrenNodesIncentiveLadder} from "../WiseSovrenNodesIncentiveLadder.sol";
 
 /**
  * @dev Low-level queue helper: validators, linked-list manipulation,
@@ -14,6 +15,10 @@ import {WiseSovrenNodesHelper} from "./WiseSovrenNodesHelper.sol";
  * traversal primitives, and discount math. In the merged diamond the
  * vault is its own custodian, so the former external bridges into the
  * vault are direct internal calls.
+ *
+ * The lane arrays are read from {WiseSovrenNodesIncentiveLadder} so
+ * the tiers the solver walks are the same tiers the constructor
+ * marks allowed.
  */
 abstract contract WiseSovrenNodesQueueLowLevelHelper is WiseSovrenNodesHelper {
 
@@ -421,18 +426,9 @@ abstract contract WiseSovrenNodesQueueLowLevelHelper is WiseSovrenNodesHelper {
     function _initializeNegativeIncentivesArray()
         internal
         pure
-        returns (int16[8] memory)
+        returns (int256[] memory)
     {
-        return [
-            int16(-100),
-            int16(-200),
-            int16(-300),
-            int16(-500),
-            int16(-1000),
-            int16(-1500),
-            int16(-2500),
-            int16(-5000)
-        ];
+        return WiseSovrenNodesIncentiveLadder.negativeIncentives();
     }
 
     function _initializeAllIncentivesArray()
@@ -440,45 +436,15 @@ abstract contract WiseSovrenNodesQueueLowLevelHelper is WiseSovrenNodesHelper {
         pure
         returns (int256[] memory)
     {
-        int256[] memory allIncentives = new int256[](17);
-
-        allIncentives[0] = 5000;
-        allIncentives[1] = 2500;
-        allIncentives[2] = 1500;
-        allIncentives[3] = 1000;
-        allIncentives[4] = 500;
-        allIncentives[5] = 300;
-        allIncentives[6] = 200;
-        allIncentives[7] = 100;
-        allIncentives[8] = 0;
-        allIncentives[9] = -100;
-        allIncentives[10] = -200;
-        allIncentives[11] = -300;
-        allIncentives[12] = -500;
-        allIncentives[13] = -1000;
-        allIncentives[14] = -1500;
-        allIncentives[15] = -2500;
-        allIncentives[16] = -5000;
-
-        return allIncentives;
+        return WiseSovrenNodesIncentiveLadder.allIncentives();
     }
 
     function _initializePositiveIncentivesArray()
         internal
         pure
-        returns (int16[9] memory)
+        returns (int256[] memory)
     {
-        return [
-            int16(5000),
-            int16(2500),
-            int16(1500),
-            int16(1000),
-            int16(500),
-            int16(300),
-            int16(200),
-            int16(100),
-            int16(0)
-        ];
+        return WiseSovrenNodesIncentiveLadder.positiveIncentives();
     }
 
     function _calculateDiscountFactor(
@@ -852,7 +818,7 @@ abstract contract WiseSovrenNodesQueueLowLevelHelper is WiseSovrenNodesHelper {
             int256 incentive = _incentives[i];
             uint256 orderAmount = QueMemberByIdAndIncentive[orderId][incentive].amount;
 
-            costInUsd += _predictDiscountedAmount(
+            costInUsd += _predictChargedAmount(
                 orderAmount,
                 incentive
             );
@@ -880,6 +846,24 @@ abstract contract WiseSovrenNodesQueueLowLevelHelper is WiseSovrenNodesHelper {
         );
     }
 
+    function _predictChargedAmount(
+        uint256 _amount,
+        int256 _incentive
+    )
+        internal
+        pure
+        returns (uint256)
+    {
+        uint256 discounted = _predictDiscountedAmount(
+            _amount,
+            _incentive
+        );
+
+        return discounted == 0
+            ? _amount
+            : discounted;
+    }
+
     function _calculatePartialOrderCost(
         uint256[] memory _partials,
         int256[] memory _incentives,
@@ -898,7 +882,7 @@ abstract contract WiseSovrenNodesQueueLowLevelHelper is WiseSovrenNodesHelper {
             int256 partialIncentive = _incentives[_ordersLength];
             partialTokens = _tokensToReceive - _totalTokensPlanned;
 
-            partialCost = _predictDiscountedAmount(
+            partialCost = _predictChargedAmount(
                 partialTokens,
                 partialIncentive
             );
@@ -917,7 +901,7 @@ abstract contract WiseSovrenNodesQueueLowLevelHelper is WiseSovrenNodesHelper {
             uint256 usdSpent
         )
     {
-        uint256 orderCost = _predictDiscountedAmount(
+        uint256 orderCost = _predictChargedAmount(
             _entry.amount,
             _incentive
         );

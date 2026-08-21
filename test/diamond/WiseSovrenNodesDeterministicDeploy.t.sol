@@ -151,6 +151,40 @@ contract WiseSovrenNodesDeterministicDeployTest is Test, DeployWiseSovrenNodesDi
         );
     }
 
+    /**
+     * @dev The shim constructor is one transaction on chain: it
+     * creates the diamond, runs the constructor that seeds all 254
+     * incentive lanes, wires every selector group and installs the
+     * hooks. Since Fusaka a single transaction may not exceed
+     * 16,777,216 gas however much room the block has, so this is a
+     * hard ceiling rather than a cost preference. The bound below
+     * leaves deliberate headroom; if a change pushes past it, the
+     * lane seeding moves out of the constructor into a master call
+     * made before the setup is finalised rather than the bound being
+     * raised.
+     */
+    function test_bootstrap_genesisTransactionFitsSingleTxGasCap()
+        public
+    {
+        BootstrapFacets memory facets = _buildFacets();
+        WiseSovrenNodesInitParams memory params = _buildParams();
+
+        uint256 before = gasleft();
+
+        new WiseSovrenNodesBootstrap(
+            params,
+            facets,
+            ccipRouterStub,
+            wiseStub,
+            true,
+            pendingMaster
+        );
+
+        uint256 used = before - gasleft();
+
+        assertLt(used, 15_000_000);
+    }
+
     // ---- 2. shim wires, configures and hands off ownership ----
 
     function test_bootstrap_wiresConfiguresAndProposesOwner()

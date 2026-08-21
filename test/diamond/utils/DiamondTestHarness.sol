@@ -6,6 +6,7 @@ import {Test} from "forge-std/Test.sol";
 
 import {WiseSovrenNodesDiamond} from "../../../src/diamond/vault/WiseSovrenNodesDiamond.sol";
 import {WiseSovrenNodesInitParams} from "../../../src/diamond/vault/WiseSovrenNodesDiamondStructs.sol";
+import {WiseSovrenNodesIncentiveLadder} from "../../../src/diamond/vault/WiseSovrenNodesIncentiveLadder.sol";
 import {AdminFacet} from "../../../src/diamond/vault/facets/AdminFacet.sol";
 import {ProxyFacet} from "../../../src/diamond/vault/facets/ProxyFacet.sol";
 import {UserFacet} from "../../../src/diamond/vault/facets/UserFacet.sol";
@@ -261,6 +262,29 @@ abstract contract DiamondTestHarness is Test {
             d,
             address(new QueueForecastFacet()),
             WiseSovrenNodesDiamondSelectors.queueForecastSelectors()
+        );
+
+        _openPremiumLanes(
+            d
+        );
+    }
+
+    /**
+     * @dev The diamond constructor seeds only the discount lanes; the
+     * premium lanes are opened by the master in a following
+     * transaction, because seeding them inline would push the genesis
+     * transaction over the single-transaction gas ceiling. Tests
+     * mirror the finished deployment, so the harness performs that
+     * step too.
+     */
+    function _openPremiumLanes(
+        WiseSovrenNodesDiamond d
+    )
+        internal
+    {
+        QueueAdminFacet(address(d)).setIncentivesAllowed(
+            WiseSovrenNodesIncentiveLadder.negativeIncentives(),
+            true
         );
     }
 

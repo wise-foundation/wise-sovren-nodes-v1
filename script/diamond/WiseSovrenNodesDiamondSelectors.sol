@@ -28,8 +28,8 @@ import {WiseSovrenNodesQueueHelper} from "../../src/diamond/vault/helpers/WiseSo
  *
  * Counts: admin=27, proxy=3, user=8, sweep=2, cashedInterest=1,
  * queueForecast=1, interestAdmin=3, rescue=1, burnWise=3, move=7,
- * bridge=14, permit2=3, multicall=1, queueAdmin=2, queueJoinLeave=5,
- * queueFulfill=4, queueView=10 — total 95, all wired at genesis.
+ * bridge=14, permit2=3, multicall=1, queueAdmin=3, queueJoinLeave=5,
+ * queueFulfill=4, queueView=10 — total 96, all wired at genesis.
  */
 library WiseSovrenNodesDiamondSelectors {
 
@@ -216,9 +216,10 @@ library WiseSovrenNodesDiamondSelectors {
         pure
         returns (bytes4[] memory sels)
     {
-        sels = new bytes4[](2);
+        sels = new bytes4[](3);
         sels[0] = QueueAdminFacet.changeMinDepositAmount.selector;
         sels[1] = QueueAdminFacet.setNegativeIncentivesNotAllowed.selector;
+        sels[2] = QueueAdminFacet.setIncentivesAllowed.selector;
     }
 
     function queueJoinLeaveSelectors()

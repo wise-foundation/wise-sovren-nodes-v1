@@ -39,14 +39,10 @@ abstract contract WiseSovrenNodesQueueHelper is WiseSovrenNodesQueueLowLevelHelp
 
         QueMember storage member = QueMemberByIdAndIncentive[_queMemberId][_incentive];
 
-        uint256 discountedAmount = _predictDiscountedAmount(
+        uint256 discountedAmount = _predictChargedAmount(
             _amount,
             _incentive
         );
-
-        discountedAmount = discountedAmount == 0
-            ? _amount
-            : discountedAmount;
 
         address cashedMember = member.member;
 
@@ -173,14 +169,10 @@ abstract contract WiseSovrenNodesQueueHelper is WiseSovrenNodesQueueLowLevelHelp
 
         QueMember storage member = QueMemberByIdAndIncentive[_queMemberId][_incentive];
 
-        uint256 discountedAmount = _predictDiscountedAmount(
+        uint256 discountedAmount = _predictChargedAmount(
             _amount,
             _incentive
         );
-
-        discountedAmount = discountedAmount == 0
-            ? _amount
-            : discountedAmount;
 
         address cashedMember = member.member;
 
@@ -456,7 +448,7 @@ abstract contract WiseSovrenNodesQueueHelper is WiseSovrenNodesQueueLowLevelHelp
             remainingBudget -= spent;
 
             if (
-                spent < _predictDiscountedAmount(
+                spent < _predictChargedAmount(
                     entry.amount,
                     _incentive
                 )
@@ -520,7 +512,7 @@ abstract contract WiseSovrenNodesQueueHelper is WiseSovrenNodesQueueLowLevelHelp
         SolveForAmountVars memory v = _initializeSolveVars();
         uint256 remainingAmount = _amount;
 
-        int16[9] memory pos = _initializePositiveIncentivesArray();
+        int256[] memory pos = _initializePositiveIncentivesArray();
 
         for (uint256 i; i < pos.length && remainingAmount > 0; ++i) {
             (
@@ -551,7 +543,7 @@ abstract contract WiseSovrenNodesQueueHelper is WiseSovrenNodesQueueLowLevelHelp
         }
 
         if (_allowNegativeIncentives && remainingAmount > 0) {
-            int16[8] memory neg = _initializeNegativeIncentivesArray();
+            int256[] memory neg = _initializeNegativeIncentivesArray();
 
             for (uint256 j; j < neg.length && remainingAmount > 0; ++j) {
                 (

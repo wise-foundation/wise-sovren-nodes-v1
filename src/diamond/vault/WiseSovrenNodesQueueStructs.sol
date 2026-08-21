@@ -26,7 +26,7 @@ abstract contract WiseSovrenNodesQueueStructs {
     }
 
     struct SolveForAmountVars {
-        int16[9] incs;
+        int256[] incs;
         int256[] tempIncentives;
         uint256[] tempOrders;
         uint256[] tempPartials;

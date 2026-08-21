@@ -17,6 +17,8 @@ import {QueueJoinLeaveFacet as QueueJoinLeaveFacet} from "../../src/diamond/vaul
 import {QueueFulfillFacet as QueueFulfillFacet} from "../../src/diamond/vault/facets/QueueFulfillFacet.sol";
 import {QueueViewFacet} from "../../src/diamond/vault/facets/QueueViewFacet.sol";
 
+import {WiseSovrenNodesIncentiveLadder} from "../../src/diamond/vault/WiseSovrenNodesIncentiveLadder.sol";
+
 import {WiseSovrenNodesDiamondSelectors} from "../../script/diamond/WiseSovrenNodesDiamondSelectors.sol";
 
 import {WiseSovrenNodesQueueStructs as QueContractDiamondStructs} from "../../src/diamond/vault/WiseSovrenNodesQueueStructs.sol";
@@ -269,6 +271,11 @@ contract QueContractDiamondCoverageTest is Test {
             WiseSovrenNodesDiamondSelectors.queueViewSelectors()
         );
 
+        QueueAdminFacet(address(v)).setIncentivesAllowed(
+            WiseSovrenNodesIncentiveLadder.negativeIncentives(),
+            true
+        );
+
         v.finalizeSetup();
     }
 
@@ -478,7 +485,7 @@ contract QueContractDiamondCoverageTest is Test {
 
         QueueJoinLeaveFacet(address(que)).joinQue(
             MIN_DEPOSIT,
-            -500
+            -10_000
         );
 
         QueueAdminFacet(address(que)).setNegativeIncentivesNotAllowed(
@@ -488,7 +495,7 @@ contract QueContractDiamondCoverageTest is Test {
         _join(
             user1,
             MIN_DEPOSIT,
-            -500
+            -10_000
         );
 
         assertEq(
@@ -1136,7 +1143,7 @@ contract QueContractDiamondCoverageTest is Test {
     {
         uint256 amount = 100 * 1e6;
 
-        int256 inc = -300;
+        int256 inc = -6_000;
 
         _join(
             user1,
@@ -1160,7 +1167,7 @@ contract QueContractDiamondCoverageTest is Test {
             inc
         );
 
-        uint256 expectedUsd = amount * (10_000 + 300) / 10_000;
+        uint256 expectedUsd = amount * (10_000 + 6_000) / 10_000;
 
         assertEq(
             vt,
@@ -1759,9 +1766,9 @@ contract QueContractDiamondCoverageTest is Test {
         assertEq(
             que.predictDiscountedAmount(
                 100 * 1e6,
-                -500
+                -10_000
             ),
-            105 * 1e6
+            200 * 1e6
         );
     }
 
@@ -2178,13 +2185,13 @@ contract QueContractDiamondCoverageTest is Test {
         _join(
             user1,
             100 * 1e6,
-            -100
+            -2_000
         );
 
         _join(
             user2,
             200 * 1e6,
-            -100
+            -2_000
         );
 
         (
@@ -2212,13 +2219,13 @@ contract QueContractDiamondCoverageTest is Test {
         _join(
             user1,
             100 * 1e6,
-            -500
+            -10_000
         );
 
         _join(
             user2,
             100 * 1e6,
-            -500
+            -10_000
         );
 
         (

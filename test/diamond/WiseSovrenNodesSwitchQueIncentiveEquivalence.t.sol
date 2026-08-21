@@ -549,7 +549,7 @@ contract WiseSovrenNodesSwitchQueIncentiveEquivalenceTest is DiamondTestHarness 
         _assertFullEquivalence(
             id,
             0,
-            -500,
+            -10_000,
             100 * 1e6
         );
     }
@@ -947,14 +947,14 @@ contract WiseSovrenNodesSwitchQueIncentiveEquivalenceTest is DiamondTestHarness 
             int256(1500),
             int256(2500),
             int256(5000),
-            int256(-100),
-            int256(-200),
-            int256(-300),
-            int256(-500),
-            int256(-1000),
-            int256(-1500),
-            int256(-2500),
-            int256(-5000)
+            int256(-2_000),
+            int256(-4_000),
+            int256(-6_000),
+            int256(-10_000),
+            int256(-20_000),
+            int256(-50_000),
+            int256(-100_000),
+            int256(-490_000)
         ];
 
         return tiers[_seed % 17];
