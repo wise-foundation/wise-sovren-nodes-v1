@@ -52,11 +52,8 @@ contract DeployVaultDeterministic is DeployWiseSovrenNodesDiamond, VaultConfig {
             network
         );
 
-        DeployCfg memory dc = _applyUsdgForwarding(
-            _loadDeployCfg(
-                network
-            ),
-            _vaultProduct()
+        DeployCfg memory dc = _loadDeployCfg(
+            network
         );
 
         VaultMesh memory mesh = _loadMesh();
@@ -132,28 +129,6 @@ contract DeployVaultDeterministic is DeployWiseSovrenNodesDiamond, VaultConfig {
         console2.log("usd        ", dc.usd);
         console2.log("router     ", cfg.router);
         console2.log("wise       ", dc.wise);
-    }
-
-    function _applyUsdgForwarding(
-        DeployCfg memory _dc,
-        string memory _product
-    )
-        internal
-        pure
-        returns (DeployCfg memory)
-    {
-        if (_sameString(_product, "usdg") == false) {
-            return _dc;
-        }
-
-        require(
-            _dc.thirdParty == address(0) || _dc.thirdParty == _dc.worker,
-            "DeployVaultDeterministic: usdg thirdParty must equal worker"
-        );
-
-        _dc.thirdParty = _dc.worker;
-
-        return _dc;
     }
 
     function _buildParams(

@@ -1,0 +1,10 @@
+{
+  "_comment": "Chainlink CCIP settings for Sepolia. Only chainSelector and router are read by the vault's share bridge; the remaining fields belong to the separate token-pool tooling. Re-verify the router with cast call typeAndVersion() before the rehearsal.",
+  "network": "sepolia",
+  "chainSelector": "16015286601757825753",
+  "router": "0x0BF3dE8c5D3e8A2B34D2BEeB17ABfCeBaf363A59",
+  "rmnProxy": "0x0000000000000000000000000000000000000000",
+  "tokenAdminRegistry": "0x0000000000000000000000000000000000000000",
+  "registryModuleOwnerCustom": "0x0000000000000000000000000000000000000000",
+  "link": "0x779877A7B0D9E8603169DdbD7836e478b4624789"
+}

@@ -6,20 +6,32 @@ import "forge-std/console2.sol";
 import {DeployWiseSovrenNodesDiamond} from "../diamond/DeployWiseSovrenNodesDiamond.s.sol";
 import {VaultConfig} from "./VaultConfig.sol";
 
-/// @notice Grinds CREATE3 product salt tags until the canonical diamond address starts with the
-/// 0x7e1E ("TELE") brand prefix shared by every product mesh — pure math, no RPC and no
-/// broadcast. Fill `deployerEOA` in config/vault_mesh.<product>.json, run
-/// `VAULT_PRODUCT=<product> forge script script/vault/MineSaltTag.s.sol`, paste the printed tag
-/// into the manifest and re-run {PredictCanonicalAddress} to record the canonical. Only bytes
-/// 21-31 of the salt are ground: bytes 0-19 stay the deployer EOA (CreateX permissioned-deploy
-/// guard — nobody else can ever claim the address on any chain) and byte 20 stays 0x00
-/// (chain-invariant), so a mined salt keeps the full squat protection. `MINE_DEPLOYER` overrides
-/// the manifest EOA; `MINE_START` / `MINE_COUNT` window the counter for batched runs.
+/// @notice Grinds CREATE3 product salt tags until the canonical diamond address opens with the
+/// brand prefix — pure math, no RPC and no broadcast. Fill `deployerEOA` in
+/// config/vault_mesh.<product>.json, run `VAULT_PRODUCT=<product> forge script
+/// script/vault/MineSaltTag.s.sol`, choose one of the printed candidates, paste its tag into the
+/// manifest and re-run {PredictCanonicalAddress} to record the canonical. Only bytes 21-31 of the
+/// salt are ground: bytes 0-19 stay the deployer EOA (CreateX permissioned-deploy guard — nobody
+/// else can ever claim the address on any chain) and byte 20 stays 0x00 (chain-invariant), so a
+/// mined salt keeps the full squat protection. `MINE_DEPLOYER` overrides the manifest EOA;
+/// `MINE_START` / `MINE_COUNT` window the counter for batched runs; `MINE_MATCHES` caps how many
+/// candidates are printed.
+///
+/// The prefix reads "Sov" in the digits hexadecimal allows: S as 5, o as 0, v approximated by b.
+/// Nothing of "Sovren" past that can be spelled at all, since r, e and n have no digit that
+/// resembles them in sequence, so three nibbles is where the name runs out and further nibbles
+/// would only pin arbitrary characters. Three constrained nibbles land roughly one address in
+/// 4096, so a default window yields many candidates and the nicest full address is chosen by eye
+/// at sign-off rather than taking the first hit.
 contract MineSaltTag is DeployWiseSovrenNodesDiamond, VaultConfig {
 
-    bytes2 internal constant BRAND_PREFIX = 0x7e1e;
+    uint256 internal constant BRAND_PREFIX = 0x50b;
+
+    uint256 internal constant BRAND_PREFIX_SHIFT = 148;
 
     uint256 internal constant DEFAULT_COUNT = 262_144;
+
+    uint256 internal constant DEFAULT_MATCHES = 20;
 
     function run()
         external
@@ -47,6 +59,16 @@ contract MineSaltTag is DeployWiseSovrenNodesDiamond, VaultConfig {
             DEFAULT_COUNT
         );
 
+        uint256 wanted = vm.envOr(
+            "MINE_MATCHES",
+            DEFAULT_MATCHES
+        );
+
+        console2.log("mesh file ", _meshPath());
+        console2.log("deployer  ", deployer);
+
+        uint256 found;
+
         for (uint256 i = start; i < start + count; ++i) {
 
             bytes11 tag = bytes11(
@@ -66,21 +88,25 @@ contract MineSaltTag is DeployWiseSovrenNodesDiamond, VaultConfig {
                 salt
             );
 
-            if (bytes2(bytes20(diamond)) == BRAND_PREFIX) {
+            if (uint160(diamond) >> BRAND_PREFIX_SHIFT == BRAND_PREFIX) {
 
-                console2.log("mesh file ", _meshPath());
-                console2.log("deployer  ", deployer);
+                console2.log("---");
                 console2.log("tries     ", i - start + 1);
                 console2.log("tag       ", vm.toString(abi.encodePacked(tag)));
                 console2.log("salt      ", vm.toString(salt));
                 console2.log("shim      ", shim);
                 console2.log("canonical ", diamond);
 
-                return;
+                found++;
+
+                if (found == wanted) {
+                    return;
+                }
             }
         }
 
-        revert(
+        require(
+            found > 0,
             "MineSaltTag: no match in window - raise MINE_COUNT or bump MINE_START"
         );
     }

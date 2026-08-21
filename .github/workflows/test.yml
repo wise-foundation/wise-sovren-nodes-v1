@@ -1,0 +1,79 @@
+name: CI
+
+permissions: {}
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  FOUNDRY_PROFILE: ci
+
+jobs:
+  check:
+    name: Foundry project
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          submodules: recursive
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      # The solc release list compiled into forge 1.7.1 (the current stable,
+      # built 2026-05-08) predates solc 0.8.36, so on a clean runner the pinned
+      # `solc_version = "0.8.36"` cannot be resolved and the build aborts before
+      # any download is attempted. Seeding the binary into the svm cache makes it
+      # resolve as an already-installed version. Remove once a foundry stable
+      # ships knowing 0.8.36.
+      - name: Install solc 0.8.36
+        run: |
+          set -euo pipefail
+          version=0.8.36
+          url=https://binaries.soliditylang.org/linux-amd64/solc-linux-amd64-v0.8.36+commit.8a079791
+          sha=c8d35afdddc3cd2743ee88b8f25e0fecd16e2bdd5f2120f37e52cd9cc45ae0e6
+          dest="$HOME/.svm/$version/solc-$version"
+          mkdir -p "$(dirname "$dest")"
+          curl -sSfL "$url" -o "$dest"
+          echo "$sha  $dest" | sha256sum --check --strict
+          chmod +x "$dest"
+
+      - name: Show Forge version
+        run: forge --version
+
+      - name: Run Forge build
+        run: forge build --sizes
+
+      # The incentive ladder reaches a premium of -490000, which does not fit in
+      # an int16. The tier arrays were that width before the ladder was widened,
+      # so a reintroduced int16 would silently truncate a lane.
+      - name: Check no narrow incentive types remain
+        run: |
+          set -euo pipefail
+          if grep -rn 'int16' src/; then
+            echo "int16 found in src/: incentive tiers must be int256"
+            exit 1
+          fi
+
+      - name: Check storage layout alignment
+        run: bash script/check_storage_layout.sh
+
+      # Fork suites need an archive endpoint and are excluded here so CI stays
+      # offline and deterministic; they are run against a real RPC before a
+      # deployment instead.
+      - name: Run Forge tests
+        run: forge test -vvv --no-match-path 'test/diamond/fork/*'
