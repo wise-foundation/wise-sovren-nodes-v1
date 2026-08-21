@@ -8,7 +8,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "MIT",
+  "license": "UNLICENSED",
   "dependencies": {
     "@chainlink/contracts-ccip": "1.6.0",
     "@chainlink/local": "0.2.9",
