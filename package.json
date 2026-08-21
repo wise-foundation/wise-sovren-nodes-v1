@@ -1,0 +1,18 @@
+{
+  "name": "wise-sovren-nodes",
+  "version": "1.0.0",
+  "description": "RWA vault contracts for Wise Sovren Nodes.",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@chainlink/contracts-ccip": "1.6.0",
+    "@chainlink/local": "0.2.9",
+    "@openzeppelin/contracts": "4.9.3"
+  },
+  "private": true
+}
