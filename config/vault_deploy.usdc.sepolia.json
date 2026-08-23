@@ -1,11 +1,11 @@
 {
-  "_comment": "Sepolia rehearsal settings for wsnUSDC. usd is Circle's Sepolia USDC; verify symbol() and decimals() on chain and record the date here before the rehearsal. thirdParty and worker are left zero so the broadcasting deployer is used on both, which keeps the rehearsal self-contained. The cap is rehearsal-sized rather than the mainnet figure, and the rate matches mainnet at zero so the kickoff runbook can be rehearsed too.",
+  "_comment": "Sepolia rehearsal settings for wsnUSDC. usd is Circle's Sepolia USDC; verify symbol() and decimals() on chain and record the date here before the rehearsal. thirdParty and worker are left zero so the broadcasting deployer is used on both, which keeps the rehearsal self-contained. The cap is rehearsal-sized rather than the mainnet figure, and the rate matches mainnet at 4000 so the scheduled decrease can be rehearsed too.",
   "usd": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
   "wise": "0x0000000000000000000000000000000000000000",
   "thirdParty": "0x0000000000000000000000000000000000000000",
   "worker": "0x0000000000000000000000000000000000000000",
   "totalDepositCap": "1000000000000",
-  "interestRate": 0,
+  "interestRate": 4000,
   "decimals": 6,
   "tokenName": "Wise Sovren Nodes USDC",
   "tokenSymbol": "wsnUSDC"

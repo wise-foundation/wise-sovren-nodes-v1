@@ -6,7 +6,7 @@ import {FacetBase} from "./FacetBase.sol";
 
 /**
  * @dev Master-only surgery on settled interest buckets, plus the
- * accrual-restamp primitive the interest kickoff depends on.
+ * accrual-restamp primitive for rate changes.
  *
  * `setCashedInterest` serves positions whose owner can no longer
  * sign (lost keys) and deliberate grants or write-offs. It writes
@@ -26,15 +26,14 @@ import {FacetBase} from "./FacetBase.sol";
  *
  * `syncInterestBulk` exists because accrual is measured from each
  * holder's own `lastSyncTimeStamp` and `setInterestRate` writes no
- * checkpoint. Turning the rate on would otherwise pay the new rate
- * back to whenever each holder was last touched. Restamping holders
- * in the same transaction as the rate change is what makes accrual
- * start at the flip, so the launch runbook batches
- * `syncInterestBulk` over every holder and `setInterestRate`
- * through the multicall facet. The sync is correct in either
- * regime: at a zero rate it banks nothing and only restamps, and at
- * a live rate it banks what is genuinely owed before restamping, so
- * it can never silently discard accrual.
+ * checkpoint: a rate change is a plain master call, and a holder's
+ * un-banked window is priced at whatever rate is current when it
+ * banks. Running the sync before a change banks that window at the
+ * outgoing rate, for the cases where it should be preserved. The
+ * sync is correct in either regime: at a zero rate it banks nothing
+ * and only restamps, and at a live rate it banks what is genuinely
+ * owed before restamping, so it can never silently discard
+ * accrual.
  *
  * Bucket surgery is gated by the same one-way
  * `supplyChangeByOwnerNotAllowed` latch as `mintSupply`/

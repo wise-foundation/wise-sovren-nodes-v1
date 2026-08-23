@@ -45,9 +45,9 @@ contract MockUSD is ERC20 {
 }
 
 /**
- * @dev Covers the zero-rate launch posture and the transition out of
- * it. The vault ships paying nothing so that claiming is worthless
- * during the lock period, and master turns accrual on later.
+ * @dev Covers the zero-rate capability and the transition out of
+ * it: a vault deployed at a zero rate pays nothing until master
+ * turns accrual on with `setInterestRate`.
  *
  * Two properties carry the suite. First, while `interestRate` is
  * zero, pending interest is identically zero for every holder and
@@ -57,10 +57,10 @@ contract MockUSD is ERC20 {
  * `lastSyncTimeStamp`, so flipping the rate on a holder who has not
  * been touched since the zero-rate phase pays the new rate all the
  * way back to that stamp. That hazard is pinned here deliberately,
- * next to the runbook test proving the fix, because the safety of
- * the launch depends on the operator restamping every holder in the
- * same transaction as the flip rather than on any property of the
- * rate setter itself.
+ * next to the runbook test proving the fix, because whether accrual
+ * starts at the flip or reaches back depends on whether the operator
+ * restamps holders, not on any property of the rate setter
+ * itself.
  */
 contract WiseSovrenNodesZeroRateLaunchTest is DiamondTestHarness {
 

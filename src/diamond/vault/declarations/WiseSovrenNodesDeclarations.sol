@@ -47,24 +47,21 @@ import {InterestRemainderDeclaration} from "./InterestRemainderDeclaration.sol";
  * shared bases. USD_TOKEN sits in storage rather than `immutable`
  * because immutables don't survive DELEGATECALL into facets.
  *
- * A genesis `interestRate` of zero is deliberately legal. The vault
- * launches paying nothing and master turns accrual on later with
- * `setInterestRate`, so the rate validator rejects only a rate above
- * `MAX_INTEREST_RATE`. Accrual is safe at zero by construction: the
- * rate is only ever a multiplier, never a divisor, so
- * `_assignInterest` banks nothing and merely restamps
- * `lastSyncTimeStamp`. Note that `bufferInterestRate` starts at zero
- * too, so during the zero-rate phase the sweep reserve is exactly
- * `totalCashedInterest` — the whole claimable liability, since no
- * pending accrual exists — and it ratchets up on the first rate
- * change.
+ * The rate validator rejects only a rate above `MAX_INTEREST_RATE`;
+ * a genesis rate of zero is deliberately legal and safe by
+ * construction, since the rate is only ever a multiplier and never a
+ * divisor: at zero, `_assignInterest` banks nothing and merely
+ * restamps `lastSyncTimeStamp`, and the sweep reserve degenerates to
+ * exactly `totalCashedInterest`. `bufferInterestRate` starts at the
+ * genesis rate and only ever ratchets up, so lowering the user rate
+ * never shrinks the sweep reserve.
  *
  * Accrual is measured from each holder's own `lastSyncTimeStamp` and
- * `setInterestRate` writes no checkpoint, so turning the rate on
- * would otherwise pay the new rate back to a holder's last touch.
- * Restamping every holder in the same transaction as the rate change
- * is what makes accrual start at the flip; see the interest-admin
- * facet for the bulk primitives that do it.
+ * `setInterestRate` writes no checkpoint, so a rate change is a
+ * plain master call and a holder's un-banked window is priced at
+ * whatever rate is current when it banks. When that window should be
+ * preserved at the outgoing rate across a change, the interest-admin
+ * facet's `syncInterestBulk` banks it first.
  *
  * The constructor seeds only the discount half of the incentive
  * ladder. The premium half is 245 further lanes, and writing them
