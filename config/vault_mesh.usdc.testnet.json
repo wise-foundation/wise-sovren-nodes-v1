@@ -1,8 +1,8 @@
 {
   "_comment": "Sepolia rehearsal manifest for wsnUSDC. The rehearsal runs the production deploy script deliberately, so the code exercised here is the code that broadcasts on mainnet; only the sign-off gate is skipped, by chain id. The salt tag is plain ASCII rather than mined, and it is bumped one rehearsal at a time (T1, T2 and so on) because CREATE3 cannot redeploy at an address it has already used. active false so the rehearsal also covers the dormant deploy and ActivateVault.",
-  "canonical": "0xf66Dc081CDf870eCb0Ec1A228fc16B2b1CBb1f55",
+  "canonical": "0x2875b27D25B029DaD8864e7143c26D34af89E331",
   "deployerEOA": "0xAE2c0c6eAD34b8E9156b146BE8B724CDb80Ba7e1",
-  "saltTag": "WSN-USDC-T1",
+  "saltTag": "WSN-USDC-T2",
   "peerDecimals": 6,
   "chains": ["sepolia"],
   "active": [false]
