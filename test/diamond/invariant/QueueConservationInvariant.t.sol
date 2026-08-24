@@ -43,7 +43,8 @@ contract MockUSD is ERC20 {
 
 /**
  * @dev Drives the queue order book with bounded random join / leave /
- * reduce / fulfill actions across the 17 allowed incentive tiers. Every
+ * reduce / fulfill actions across a 17-tier sample of the 254 allowed
+ * incentive tiers, mixing both discount and premium lanes. Every
  * action is wrapped in `try/catch` so invalid attempts (wrong owner,
  * empty bucket, below-minimum amount) don't abort the run.
  */

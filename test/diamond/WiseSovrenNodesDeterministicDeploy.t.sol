@@ -153,15 +153,18 @@ contract WiseSovrenNodesDeterministicDeployTest is Test, DeployWiseSovrenNodesDi
 
     /**
      * @dev The shim constructor is one transaction on chain: it
-     * creates the diamond, runs the constructor that seeds all 254
-     * incentive lanes, wires every selector group and installs the
-     * hooks. Since Fusaka a single transaction may not exceed
-     * 16,777,216 gas however much room the block has, so this is a
-     * hard ceiling rather than a cost preference. The bound below
-     * leaves deliberate headroom; if a change pushes past it, the
-     * lane seeding moves out of the constructor into a master call
-     * made before the setup is finalised rather than the bound being
-     * raised.
+     * creates the diamond, runs the constructor that seeds the nine
+     * discount lanes of the incentive ladder, wires every selector
+     * group and installs the hooks. The 245 premium lanes stay out
+     * of the constructor deliberately and open in the master
+     * transaction right after the ownership claim, exactly because
+     * their writes would push this transaction past the ceiling.
+     * Since Fusaka a single transaction may not exceed 16,777,216
+     * gas however much room the block has, so this is a hard ceiling
+     * rather than a cost preference. The bound below leaves
+     * deliberate headroom; if a change pushes past it, more
+     * constructor work moves out into master calls made before the
+     * setup is finalised rather than the bound being raised.
      */
     function test_bootstrap_genesisTransactionFitsSingleTxGasCap()
         public
@@ -484,6 +487,93 @@ contract WiseSovrenNodesDeterministicDeployTest is Test, DeployWiseSovrenNodesDi
         return guardedSalt(
             _deployer,
             _salt
+        );
+    }
+
+    // ---- 7. the deploy flow opens the premium half ----
+
+    function test_deployWithoutFinalize_opensPremiumLanes()
+        public
+    {
+        (
+            WiseSovrenNodesDiamond diamond,
+        ) = deployWithoutFinalize(
+            _buildParams()
+        );
+
+        assertTrue(
+            diamond.incentiveAllowed(5_000)
+        );
+
+        assertTrue(
+            diamond.incentiveAllowed(-2_000)
+        );
+
+        assertTrue(
+            diamond.incentiveAllowed(-490_000)
+        );
+
+        assertFalse(
+            diamond.incentiveAllowed(-100)
+        );
+
+        assertEq(
+            diamond.initialized(),
+            false
+        );
+    }
+
+    function test_deploy_finalizedDiamondHasPremiumLanesOpen()
+        public
+    {
+        (
+            WiseSovrenNodesDiamond diamond,
+        ) = deploy(
+            _buildParams()
+        );
+
+        assertTrue(
+            diamond.incentiveAllowed(5_000)
+        );
+
+        assertTrue(
+            diamond.incentiveAllowed(-2_000)
+        );
+
+        assertTrue(
+            diamond.incentiveAllowed(-490_000)
+        );
+
+        assertFalse(
+            diamond.incentiveAllowed(-100)
+        );
+
+        assertEq(
+            diamond.initialized(),
+            true
+        );
+    }
+
+    function test_bootstrap_doesNotOpenPremiumLanes()
+        public
+    {
+        WiseSovrenNodesBootstrap shim = new WiseSovrenNodesBootstrap(
+            _buildParams(),
+            _buildFacets(),
+            ccipRouterStub,
+            wiseStub,
+            true,
+            pendingMaster
+        );
+
+        WiseSovrenNodesDiamond diamond = shim.diamond();
+
+        assertTrue(
+            diamond.incentiveAllowed(5_000)
+        );
+
+        assertFalse(
+            diamond.incentiveAllowed(-2_000)
         );
     }
 }
