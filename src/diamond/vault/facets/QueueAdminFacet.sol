@@ -4,6 +4,8 @@ pragma solidity =0.8.36;
 
 import {QueueFacetBase} from "./QueueFacetBase.sol";
 
+import {WiseSovrenNodesIncentiveLadder} from "../WiseSovrenNodesIncentiveLadder.sol";
+
 /**
  * @dev Master-only queue setters: minimum deposit, the
  * negative-incentive feature flag, and opening or closing incentive
@@ -13,9 +15,10 @@ import {QueueFacetBase} from "./QueueFacetBase.sol";
  * large to seed in the diamond's constructor: those writes would
  * push the genesis transaction past the ceiling a single
  * transaction may not exceed. The master opens them in a following
- * transaction instead, feeding the same ladder library the solver
- * traverses, so the lanes that accept orders and the lanes that get
- * quoted stay the same set.
+ * transaction instead. Every lane written here is checked against
+ * the same ladder library the solver traverses, so the lanes that
+ * accept orders and the lanes that get quoted are always the same
+ * set.
  */
 contract QueueAdminFacet is QueueFacetBase {
 
@@ -67,6 +70,11 @@ contract QueueAdminFacet is QueueFacetBase {
         for (uint256 i; i < _incentives.length; ++i) {
 
             int256 incentive = _incentives[i];
+
+            require(
+                WiseSovrenNodesIncentiveLadder.isLadderLane(incentive),
+                InvalidValue()
+            );
 
             if (incentiveAllowed[incentive] == _allowed) {
                 continue;

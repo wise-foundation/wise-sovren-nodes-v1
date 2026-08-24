@@ -26,7 +26,10 @@ pragma solidity =0.8.36;
  * the same set by construction. A tier that were allowed but absent
  * from the traversal would accept orders that no quote could ever
  * see, and a tier traversed but not allowed would be planned against
- * and then revert on execution.
+ * and then revert on execution. The membership predicate
+ * `isLadderLane` lets the lane setter reject anything outside these
+ * arrays, so the guarantee holds for later admin calls and not only
+ * for the paths that read the arrays directly.
  *
  * Order matters as much as membership. Both arrays run best-price
  * first from the buyer's point of view, deepest discount down to
@@ -93,5 +96,31 @@ library WiseSovrenNodesIncentiveLadder {
         for (uint256 j; j < PREMIUM_LANE_COUNT; ++j) {
             lanes[POSITIVE_LANE_COUNT + j] = -PREMIUM_STEP * int256(j + 1);
         }
+    }
+
+    function isLadderLane(
+        int256 _incentive
+    )
+        internal
+        pure
+        returns (bool)
+    {
+        if (_incentive < 0) {
+            if (_incentive < -PREMIUM_STEP * int256(PREMIUM_LANE_COUNT)) {
+                return false;
+            }
+
+            return _incentive % PREMIUM_STEP == 0;
+        }
+
+        int256[] memory positives = positiveIncentives();
+
+        for (uint256 i; i < POSITIVE_LANE_COUNT; ++i) {
+            if (positives[i] == _incentive) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

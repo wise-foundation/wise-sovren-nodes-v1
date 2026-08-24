@@ -355,6 +355,129 @@ contract WiseSovrenNodesPremiumLadderTest is DiamondTestHarness {
         );
     }
 
+    // ---- the setter accepts ladder lanes only ----
+
+    function test_setIncentivesAllowed_beyondLastPremium_reverts()
+        public
+    {
+        _expectLaneRejected(
+            LAST_PREMIUM - 2_000
+        );
+    }
+
+    function test_setIncentivesAllowed_offStepPremium_reverts()
+        public
+    {
+        _expectLaneRejected(
+            FIRST_PREMIUM - 1
+        );
+    }
+
+    function test_setIncentivesAllowed_retiredTelecomTier_reverts()
+        public
+    {
+        _expectLaneRejected(
+            -100
+        );
+    }
+
+    function test_setIncentivesAllowed_abovePrecisionRate_reverts()
+        public
+    {
+        _expectLaneRejected(
+            int256(PRECISION_RATE) + 1
+        );
+    }
+
+    function test_setIncentivesAllowed_atPrecisionRate_reverts()
+        public
+    {
+        _expectLaneRejected(
+            int256(PRECISION_RATE)
+        );
+    }
+
+    function test_setIncentivesAllowed_offLadderDiscount_reverts()
+        public
+    {
+        _expectLaneRejected(
+            250
+        );
+    }
+
+    function test_setIncentivesAllowed_extremeNegative_reverts()
+        public
+    {
+        _expectLaneRejected(
+            type(int256).min
+        );
+    }
+
+    function test_setIncentivesAllowed_oneBadLaneRejectsWholeBatch()
+        public
+    {
+        int256[] memory lanes = new int256[](2);
+        lanes[0] = FIRST_PREMIUM;
+        lanes[1] = FIRST_PREMIUM - 1;
+
+        vm.expectRevert(
+            WiseSovrenNodesDiamondErrors.InvalidValue.selector
+        );
+
+        QueueAdminFacet(address(diamond)).setIncentivesAllowed(
+            lanes,
+            false
+        );
+
+        assertTrue(diamond.incentiveAllowed(FIRST_PREMIUM));
+    }
+
+    function test_setIncentivesAllowed_positiveLadderLane_succeeds()
+        public
+    {
+        int256[] memory lanes = new int256[](1);
+        lanes[0] = 5_000;
+
+        QueueAdminFacet(address(diamond)).setIncentivesAllowed(
+            lanes,
+            false
+        );
+
+        assertFalse(diamond.incentiveAllowed(5_000));
+    }
+
+    function test_setIncentivesAllowed_zeroLane_succeeds()
+        public
+    {
+        int256[] memory lanes = new int256[](1);
+        lanes[0] = 0;
+
+        QueueAdminFacet(address(diamond)).setIncentivesAllowed(
+            lanes,
+            false
+        );
+
+        assertFalse(diamond.incentiveAllowed(0));
+    }
+
+    function _expectLaneRejected(
+        int256 _incentive
+    )
+        internal
+    {
+        int256[] memory lanes = new int256[](1);
+        lanes[0] = _incentive;
+
+        vm.expectRevert(
+            WiseSovrenNodesDiamondErrors.InvalidValue.selector
+        );
+
+        QueueAdminFacet(address(diamond)).setIncentivesAllowed(
+            lanes,
+            true
+        );
+    }
+
     // ---- price at the extremes ----
 
     function test_fulfillOrder_maxPremium_paysExactlyFiftyTimesFace()
