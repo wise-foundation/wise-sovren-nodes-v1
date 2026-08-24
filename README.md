@@ -15,8 +15,8 @@ Wise Telecom Nodes vault codebase.
 ## Setup
 
 ```bash
-git clone --recurse-submodules https://github.com/vonMangoldt/Wise-Sovren-Nodes-v1.git
-cd Wise-Sovren-Nodes-v1
+git clone --recurse-submodules https://github.com/vonMangoldt/wise-sovren-nodes-v1.git
+cd wise-sovren-nodes-v1
 npm ci
 ```
 
