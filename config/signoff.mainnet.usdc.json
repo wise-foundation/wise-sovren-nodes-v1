@@ -1,0 +1,17 @@
+{
+  "_comment": "Mainnet sign-off for wsnUSDC, written 2026-08-24 after the completed sepolia rehearsal. Every field below is copied verbatim from its source file (vault_deploy.usdc.mainnet.json, vault_mesh.usdc.json, ccip.mainnet.json) and the deploy script refuses to broadcast unless all of them still match. Regenerate this file from the sources if any of them legitimately changes; never hand-patch it alone.",
+  "usd": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "wise": "0x0000000000000000000000000000000000000000",
+  "thirdParty": "0x8245D987A36DF8f3C46f6B75ef70f734027f2C29",
+  "worker": "0x0000000000000000000000000000000000000000",
+  "totalDepositCap": "3000000000000",
+  "interestRate": 4000,
+  "decimals": 6,
+  "tokenName": "Wise Sovren Nodes USDC",
+  "tokenSymbol": "wsnUSDC",
+  "canonical": "0x50bae2675A6D7D9CADf9e2Ec96c7e45897Be8603",
+  "deployerEOA": "0xAE2c0c6eAD34b8E9156b146BE8B724CDb80Ba7e1",
+  "saltTag": "0x0000000000000000001720",
+  "ccipRouter": "0x80226fc0Ee2b096224EeAc085Bb9a8cba1146f7D",
+  "ccipSelector": "5009297550715157269"
+}
