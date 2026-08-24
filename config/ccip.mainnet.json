@@ -1,5 +1,5 @@
 {
-  "_comment": "Chainlink CCIP settings for Ethereum mainnet. Only chainSelector and router are read by the vault's share bridge; the remaining fields belong to the separate token-pool tooling and stay zero here. Re-verify the router with cast call typeAndVersion() before sign-off: the bootstrap sets it once and never rotates it, so a wrong router would burn the mined salt.",
+  "_comment": "Chainlink CCIP settings for Ethereum mainnet. Only chainSelector and router are read by the vault's share bridge; the remaining fields belong to the separate token-pool tooling and stay zero here. Re-verify the router with cast call typeAndVersion() before sign-off: the bootstrap sets it once and never rotates it, so a wrong router would burn the mined salt. typeAndVersion() answered Router 1.2.0 on 2026-08-24.",
   "network": "mainnet",
   "chainSelector": "5009297550715157269",
   "router": "0x80226fc0Ee2b096224EeAc085Bb9a8cba1146f7D",
