@@ -1,0 +1,9 @@
+{
+  "_comment": "Mainnet mesh manifest for wsnUSDC. One chain at launch, but the canonical address is reserved on every EVM chain by the deployer-guarded salt, so further chains can be added later at the same address. canonical was mined with MineSaltTag and confirmed with PredictCanonicalAddress on 2026-08-24; saltTag is the mined tag in its hex form. deployerEOA is the dedicated deployment account; the key behind it is the permanent claim on this address, so it is created for this purpose and held accordingly. active false deploys dormant, with the deposit gate closed, and ActivateVault opens it at launch.",
+  "canonical": "0x50bae2675A6D7D9CADf9e2Ec96c7e45897Be8603",
+  "deployerEOA": "0xAE2c0c6eAD34b8E9156b146BE8B724CDb80Ba7e1",
+  "saltTag": "0x0000000000000000001720",
+  "peerDecimals": 6,
+  "chains": ["mainnet"],
+  "active": [false]
+}

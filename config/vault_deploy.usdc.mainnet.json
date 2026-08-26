@@ -1,0 +1,12 @@
+{
+  "_comment": "Wise Sovren Nodes USDC, Ethereum mainnet. usd is Circle USDC; symbol() USDC and decimals() 6 verified on chain 2026-08-24. wise stays zero: the burn hub is routed but never armed, and the bootstrap skips arming it while this is zero. thirdParty receives every deposit; cast code returned empty on 2026-08-24, so this is an externally owned account. worker receives swept overhang and is the deployer at launch, changeable later by the master through the timelocked worker flow. interestRate is 4000: the vault launches paying 40 percent, and the master lowers it to 20 percent about six months in with a plain setInterestRate call. The rate carries no per-holder checkpoint, so a cut prices each holder's un-banked accrual at the new rate; run syncInterestBulk first if the outgoing-rate window should be banked. totalDepositCap is 3 million USDC at launch, raisable later by the master through setTotalDepositCap.",
+  "usd": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "wise": "0x0000000000000000000000000000000000000000",
+  "thirdParty": "0x8245D987A36DF8f3C46f6B75ef70f734027f2C29",
+  "worker": "0x0000000000000000000000000000000000000000",
+  "totalDepositCap": "3000000000000",
+  "interestRate": 4000,
+  "decimals": 6,
+  "tokenName": "Wise Sovren Nodes USDC",
+  "tokenSymbol": "wsnUSDC"
+}
