@@ -19,7 +19,7 @@ import {WiseSovrenNodesInitParams} from "../../../src/diamond/vault/WiseSovrenNo
  *
  * The `harness*` writers place single storage fields so the driver can
  * seed a registered same-chain peer, a symbolic deposit cap and the
- * mover's balance and last-sync stamp — so a year of pending interest
+ * mover's balance and last-sync stamp - so a year of pending interest
  * stands ready to expose any residual compound mint.
  * `harnessSetPeerVault` writes the live slot the timelock's
  * `executePeerVaultChange` would write. Nothing here alters vault

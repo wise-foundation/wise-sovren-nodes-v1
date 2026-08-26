@@ -29,20 +29,20 @@ import {WiseSovrenNodesInitParams} from "../../../src/diamond/vault/WiseSovrenNo
  * Every `testFuzz_*` is (a) fuzzable by Foundry (`forge test`) and (b)
  * symbolically provable by Kontrol
  * (`kontrol prove --match-test 'BridgeReceivePropertiesTest.<fn>'`).
- * The payload is pinned to its two length shapes — the 64-byte legacy
+ * The payload is pinned to its two length shapes - the 64-byte legacy
  * `(address, uint256)` encoding and one referral-carrying
- * `(address, uint256, bytes)` encoding — because the decode branch is
+ * `(address, uint256, bytes)` encoding - because the decode branch is
  * selected purely by payload length; amounts, pre-balances and gate
  * flags stay symbolic. The message id is a concrete representative
  * (the symbolic engine does not terminate on a fully symbolic mapping
- * key, and no code path reads the id's content — it is only a lookup
+ * key, and no code path reads the id's content - it is only a lookup
  * key); the id dimension is covered by the Foundry fuzz campaign.
  *
  * The receive path carries NO economic gate: beyond the router
  * authentication, the peer enabled + match checks, the replay flag
  * and the `amount > 0` sanity check, delivery is unconditional. The
- * relocated deposit-cap budget arrives with the shares —
- * `totalDepositCap += amount` immediately before the uncapped mint —
+ * relocated deposit-cap budget arrives with the shares -
+ * `totalDepositCap += amount` immediately before the uncapped mint -
  * so the mint can mathematically never exceed the raised cap. Each
  * lemma therefore also pins the cap delta: a successful delivery
  * raises `totalDepositCap` by exactly the payload amount, a failed
@@ -190,7 +190,7 @@ contract BridgeReceivePropertiesTest is Test {
      * @dev Success half of the ⟺: on a routed lane with a fresh id
      * and a positive amount, delivery always succeeds, marks the id
      * processed, raises the deposit cap by EXACTLY the payload amount
-     * and mints EXACTLY the payload amount to the payload user — on
+     * and mints EXACTLY the payload amount to the payload user - on
      * top of any pre-existing balance, for any amounts.
      */
     function testFuzz_QLV5_successSetsFlagAndMintsExactly(
@@ -243,11 +243,11 @@ contract BridgeReceivePropertiesTest is Test {
     /**
      * @dev The full ⟺ over symbolic gates: for ANY combination of
      * lane-enabled, peer-match, already-processed and amount, the
-     * delivery either succeeds — which happens EXACTLY when every gate
-     * passes — setting the flag, raising the deposit cap by the amount
+     * delivery either succeeds - which happens EXACTLY when every gate
+     * passes - setting the flag, raising the deposit cap by the amount
      * and minting the amount, or reverts wholesale leaving the flag,
      * the cap and the supply untouched. The four gates are the ENTIRE
-     * revert surface of the receive path — there is no economic gate —
+     * revert surface of the receive path - there is no economic gate -
      * so no path marks without minting, no path mints without marking,
      * and a failed delivery stays retryable.
      */
@@ -325,8 +325,8 @@ contract BridgeReceivePropertiesTest is Test {
     /**
      * @dev At-most-once, end to end: a successful delivery followed by
      * a redelivery of the identical message reverts the second time,
-     * and the total minted — and the total deposit-cap budget imported
-     * — over both attempts is exactly one payload amount.
+     * and the total minted - and the total deposit-cap budget imported
+     * - over both attempts is exactly one payload amount.
      */
     function testFuzz_QLV5_secondDeliverySameIdReverts(
         uint256 _amount
@@ -372,7 +372,7 @@ contract BridgeReceivePropertiesTest is Test {
      * the referral bytes are transport-only: whether the referral
      * feature is on or off, delivery marks the id, raises the deposit
      * cap by exactly the payload amount and mints exactly the payload
-     * amount — the referral data never changes what is minted.
+     * amount - the referral data never changes what is minted.
      */
     function testFuzz_QLV5_referralShapeIsTransportOnly(
         uint256 _amount,

@@ -199,7 +199,7 @@ contract BridgeInvariantHandler is Test {
 
 /**
  * @dev Stateful-fuzz invariants: bridging shares between two peer
- * vaults on equal decimals conserves the combined share supply — burn
+ * vaults on equal decimals conserves the combined share supply - burn
  * on the source and mint on the destination always net to zero, so
  * `vaultA.totalSupply() + vaultB.totalSupply()` never drifts from the
  * seeded total. The deposit-cap budget relocates with the shares

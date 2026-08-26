@@ -13,18 +13,18 @@ import {WiseSovrenNodesInitParams} from "../../../src/diamond/vault/WiseSovrenNo
  * `testFuzz_*` is (a) fuzzable by Foundry (`forge test`) and (b)
  * symbolically provable by Kontrol
  * (`kontrol prove --match-test 'SwitchPropertiesTest.<fn>'`). Inputs are
- * plain parameters — concrete under Foundry, symbolic under Kontrol — and
+ * plain parameters - concrete under Foundry, symbolic under Kontrol - and
  * postconditions use raw `assert` (Panic 0x01).
  *
  * The harness replays the real internal-helper sequence of
  * `switchQueIncentive`, so these prove the two guarantees the differential
  * suite checks by example, but over ALL amounts:
  *
- *   1. VALUE-NEUTRAL — a switch mints/burns/transfers nothing and its
+ *   1. VALUE-NEUTRAL - a switch mints/burns/transfers nothing and its
  *      proxy accounting round-trips, so `totalSupply`, the owner's token
  *      balance, and the owner's `proxyBalance` are invariant.
  *
- *   2. CONSERVATION — a switch moves exactly one order from the source
+ *   2. CONSERVATION - a switch moves exactly one order from the source
  *      count to the destination count, leaving `totalActiveOrders` and the
  *      moved amount unchanged (the queue-conservation invariant).
  *
@@ -81,7 +81,7 @@ contract SwitchPropertiesTest is Test {
      * @dev A switch is value-neutral: it never mints, burns or transfers,
      * and its `-amount` then `+amount` proxy accounting round-trips, so the
      * owner's token balance, the total supply, and the owner's proxy
-     * balance are all exactly what they were before — for any amount.
+     * balance are all exactly what they were before - for any amount.
      */
     function testFuzz_switchIsValueNeutral(
         uint256 _amount
@@ -129,7 +129,7 @@ contract SwitchPropertiesTest is Test {
      * @dev A switch conserves order accounting: `totalActiveOrders` is
      * unchanged, exactly one order moves from the source count to the
      * destination count, and the moved order carries the full original
-     * amount into the destination queue — for any amount.
+     * amount into the destination queue - for any amount.
      */
     function testFuzz_switchConservesOrders(
         uint256 _amount

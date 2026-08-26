@@ -46,7 +46,7 @@ contract MockUSD is ERC20 {
 /**
  * @dev INT-7 lockstep suite: `totalCashedInterest` must equal the
  * sum of every user's `cashedInterest` bucket after every mutation
- * path — accrual, full claim, exact-amount claim, partial claim
+ * path - accrual, full claim, exact-amount claim, partial claim
  * plus compound, compound (direct, via queue fulfillment),
  * user-to-user interest moves (net-zero), and ERC20 transfer
  * accrual of both parties. Every mutation also emits

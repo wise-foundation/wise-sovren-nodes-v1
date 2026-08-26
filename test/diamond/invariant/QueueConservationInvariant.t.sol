@@ -269,7 +269,7 @@ contract QueueInvariantHandler is Test {
 /**
  * @dev Stateful-fuzz invariant: the global `totalActiveOrders` counter
  * must always equal the sum of the per-incentive counters, and each
- * bucket's current-order pointer must stay within its allocation range —
+ * bucket's current-order pointer must stay within its allocation range -
  * across any sequence of join / leave / reduce / fulfill.
  */
 contract QueueConservationInvariantTest is DiamondTestHarness {

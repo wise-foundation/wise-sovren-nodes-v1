@@ -35,7 +35,7 @@ contract MockUSD is ERC20 {
  * consumer a full-ids list that trips both legs. Likewise the
  * full-fulfill `amount > 0` liveness guard is defensive: every
  * cursor-advancing path keeps the current order live, so a zero-amount
- * current order is unreachable via the public surface — the guard makes
+ * current order is unreachable via the public surface - the guard makes
  * that state revert explicitly instead of leaning on the downstream
  * `safeTransferFrom(sender, address(0), 0)` revert of standard ERC20s.
  */

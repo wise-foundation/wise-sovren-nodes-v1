@@ -19,7 +19,7 @@ import {WiseSovrenNodesInitParams} from "../../../src/diamond/vault/WiseSovrenNo
  * Relocations MOVE deposit-cap budget with the shares. A bridge-IN
  * raises `totalDepositCap` by `amount` (`_raiseDepositCap`, before
  * the mint) and mints `amount`, so the two sides move in lockstep and
- * room is preserved — the receive-path mint can mathematically never
+ * room is preserved - the receive-path mint can mathematically never
  * exceed the raised cap, and `ccipReceive` carries no economic revert
  * path at all (only the router, peer, replay and zero-amount guards).
  * A bridge-OUT burns `amount` and lowers `totalDepositCap` by
@@ -27,13 +27,13 @@ import {WiseSovrenNodesInitParams} from "../../../src/diamond/vault/WiseSovrenNo
  * on the way out as well and the mesh-wide cap sum is conserved by
  * user flows.
  *
- * Both properties compare room in all-addition form —
+ * Both properties compare room in all-addition form -
  *
  *   capAfter + supplyBefore == capBefore + supplyAfter
  *
  * with the per-side deltas stated additively as well
  * (`capAfter == capBefore + amount` on receive,
- * `capAfter + amount == capBefore` on bridge-out) — because
+ * `capAfter + amount == capBefore` on bridge-out) - because
  * subtraction forms would demand underflow side conditions on the
  * symbolic pre-state. Every operand is bounded by `MAX_BASE`, so the
  * sums stay far below 2**256. The pre-state assumes
@@ -168,10 +168,10 @@ contract BridgeHeadroomPropertiesTest is Test {
     /**
      * @dev Bridge-in half of BRG-5: for ANY payload amount and ANY
      * cap/supply pre-state, a delivered `ccipReceive` raises the cap
-     * and mints in lockstep — `capAfter == capBefore + amount`,
-     * `supplyAfter == supplyBefore + amount`, the mint exact — so the
+     * and mints in lockstep - `capAfter == capBefore + amount`,
+     * `supplyAfter == supplyBefore + amount`, the mint exact - so the
      * room is preserved term for term; or it reverts wholesale
-     * (router / peer / replay / zero amount — there is no economic
+     * (router / peer / replay / zero amount - there is no economic
      * gate), leaving cap and supply untouched. Relocation is never
      * origination: arriving shares bring their deposit-cap budget
      * along and change nothing about the local room.
@@ -243,8 +243,8 @@ contract BridgeHeadroomPropertiesTest is Test {
     /**
      * @dev Bridge-out half of BRG-5: for ANY amount and ANY cap/supply
      * pre-state, `bridgeToVault`'s burn-and-send core lowers the cap
-     * and burns in lockstep — `capAfter + amount == capBefore`,
-     * `supplyAfter + amount == supplyBefore` — so the room is
+     * and burns in lockstep - `capAfter + amount == capBefore`,
+     * `supplyAfter + amount == supplyBefore` - so the room is
      * preserved term for term; or it reverts wholesale (zero amount,
      * insufficient balance), leaving cap and supply untouched.
      * Departing shares take their deposit-cap budget with them:

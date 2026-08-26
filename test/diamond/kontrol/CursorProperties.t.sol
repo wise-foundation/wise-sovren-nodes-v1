@@ -20,8 +20,8 @@ import {WiseSovrenNodesInitParams} from "../../../src/diamond/vault/WiseSovrenNo
  * The proof shape is the inductive step, one lemma per queue mutation:
  * each test seeds a small lane that satisfies QUE-10 (structure
  * concrete so mapping slots stay concrete for the symbolic engine,
- * amounts fully symbolic), runs one real mutation — join, leave-head,
- * leave-mid, full fulfill, partial fulfill — and asserts the predicate
+ * amounts fully symbolic), runs one real mutation - join, leave-head,
+ * leave-mid, full fulfill, partial fulfill - and asserts the predicate
  * still holds plus the exact expected cursor value. Together with the
  * base case (a fresh lane has cursor == edge == 0) this proves the
  * cursor law is preserved by every reachable queue transition; the
@@ -139,7 +139,7 @@ contract CursorPropertiesTest is Test {
      * form (cursor == edge == 0); the first join makes the new order
      * the lowest live id without moving the cursor (it already points
      * there); a second join appends behind and the cursor still points
-     * at the oldest order — for any amounts.
+     * at the oldest order - for any amounts.
      */
     function testFuzz_QUE10_joinNeverMovesCursor(
         uint256 _amountA,
@@ -192,7 +192,7 @@ contract CursorPropertiesTest is Test {
 
     /**
      * @dev Leave step, head case: when the cursor order itself leaves,
-     * the cursor advances to the next live order — for any amounts.
+     * the cursor advances to the next live order - for any amounts.
      */
     function testFuzz_QUE10_leaveHeadAdvancesCursorToNextActive(
         uint256 _amountA,
@@ -235,7 +235,7 @@ contract CursorPropertiesTest is Test {
     /**
      * @dev Leave step, mid case: when a NON-cursor order leaves, the
      * cursor stays on the oldest live order and the list splice keeps
-     * the predicate intact — for any amounts.
+     * the predicate intact - for any amounts.
      */
     function testFuzz_QUE10_leaveMidKeepsCursor(
         uint256 _amountA,
@@ -277,8 +277,8 @@ contract CursorPropertiesTest is Test {
 
     /**
      * @dev Leave step, last-order case: when the only live order
-     * leaves, the cursor parks exactly at the allocation edge — the
-     * empty-lane form of the predicate — for any amount.
+     * leaves, the cursor parks exactly at the allocation edge - the
+     * empty-lane form of the predicate - for any amount.
      */
     function testFuzz_QUE10_leaveLastRestoresEmptyForm(
         uint256 _amount
@@ -312,7 +312,7 @@ contract CursorPropertiesTest is Test {
     /**
      * @dev Fulfill step, full case: fulfilling the head order in full
      * (the real `_processOrder`, USD payment included) deletes it and
-     * advances the cursor to the next live order — for any amounts.
+     * advances the cursor to the next live order - for any amounts.
      */
     function testFuzz_QUE10_fullFulfillAdvancesCursor(
         uint256 _amountA,
@@ -369,7 +369,7 @@ contract CursorPropertiesTest is Test {
 
     /**
      * @dev Fulfill step, partial case: a partial fulfillment shrinks
-     * the head order but keeps it live, so the cursor must NOT move —
+     * the head order but keeps it live, so the cursor must NOT move -
      * for any amount and any partial strictly below it.
      */
     function testFuzz_QUE10_partialFulfillKeepsCursor(

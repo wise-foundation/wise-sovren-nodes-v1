@@ -42,7 +42,7 @@ contract MockUSDNoPermit is ERC20 {
 
 /**
  * @dev Mirror of the real Permit2 surface used for unit testing.
- * The signature is intentionally ignored — we only validate the
+ * The signature is intentionally ignored - we only validate the
  * facet's call shape and the resulting token movement; real
  * signature verification is covered by the fork tests against the
  * canonical Permit2 deployment.

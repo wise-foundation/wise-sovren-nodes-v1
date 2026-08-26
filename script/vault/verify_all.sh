@@ -73,7 +73,7 @@ RUN="broadcast/${DEPLOY_SCRIPT}/${CHAINID}/run-latest.json"
 
 if [ ! -f "$RUN" ]; then
   echo "!! no deploy broadcast at $RUN"
-  echo "!! facets NOT verified — run the deploy first, or pass the correct deploy script as arg 3"
+  echo "!! facets NOT verified - run the deploy first, or pass the correct deploy script as arg 3"
   exit 1
 fi
 
@@ -90,7 +90,7 @@ for t in j.get('transactions',[]):
         break
 print(addr)")
   if [ -z "$ADDR" ]; then
-    echo "!! $NAME NOT FOUND in broadcast — not verified"
+    echo "!! $NAME NOT FOUND in broadcast - not verified"
     MISSING=$((MISSING+1))
     continue
   fi
@@ -99,7 +99,7 @@ print(addr)")
 done
 
 if [ "$MISSING" -ne 0 ]; then
-  echo "!! $MISSING facet(s) were missing from the broadcast — investigate before mainnet"
+  echo "!! $MISSING facet(s) were missing from the broadcast - investigate before mainnet"
   exit 1
 fi
 

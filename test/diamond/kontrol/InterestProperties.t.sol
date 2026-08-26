@@ -14,8 +14,8 @@ import {WiseSovrenNodesInitParams} from "../../../src/diamond/vault/WiseSovrenNo
  * Every `testFuzz_*` here is written so it can be (a) fuzzed by Foundry
  * (`forge test`) and (b) symbolically proven by Kontrol
  * (`kontrol prove --match-test 'InterestPropertiesTest.<fn>'`). Inputs
- * are plain function parameters — concrete random samples under Foundry,
- * fully symbolic variables under Kontrol — and postconditions use raw
+ * are plain function parameters - concrete random samples under Foundry,
+ * fully symbolic variables under Kontrol - and postconditions use raw
  * Solidity `assert` (Panic 0x01) so Kontrol detects any violating branch
  * unambiguously.
  *
@@ -133,8 +133,8 @@ contract InterestPropertiesTest is Test {
      * (`_assignInterest(InterestRateProxy)`, reached on every deposit /
      * transfer / claim and from `triggerAssignInterest`) never increases
      * the contract's cashed interest. This pins the most dangerous
-     * configuration — the contract named as its OWN benefactor, so the
-     * redirect points straight back at it — and proves cashed interest is
+     * configuration - the contract named as its OWN benefactor, so the
+     * redirect points straight back at it - and proves cashed interest is
      * untouched for any balance, proxy balance, rate and pre-existing
      * cashed amount. (A benefactor other than the contract writes to that
      * other account's cashed slot, never the contract's, by construction;
@@ -294,7 +294,7 @@ contract InterestPropertiesTest is Test {
     /**
      * @dev At exactly one year the cap is tight: pending equals precisely
      * 20% of the base (floored). Proves the rate delivers exactly 20% per
-     * annum — never silently less due to intermediate rounding, never
+     * annum - never silently less due to intermediate rounding, never
      * more.
      */
     function testFuzz_PendingExactlyTwentyPercentAtOneYear(
@@ -345,7 +345,7 @@ contract InterestPropertiesTest is Test {
      * entitlement `base * rate * dt / (year * 10000)`. Stated in
      * cross-multiplied integer form to avoid division rounding in the
      * assertion, this proves the integer flooring always rounds in the
-     * protocol's favour — a user can never be over-credited, even after
+     * protocol's favour - a user can never be over-credited, even after
      * decades of accrual.
      */
     function testFuzz_InterestNeverExceedsNominalLinear(
@@ -472,7 +472,7 @@ contract InterestPropertiesTest is Test {
      * @dev The banked-interest ledger transfer is exactly conservative:
      * moving interest debits the sender by precisely the moved amount,
      * credits the target by precisely the same amount, and therefore
-     * never changes the total cashed interest in existence — for any
+     * never changes the total cashed interest in existence - for any
      * pre-existing ledger balances, any amount and both move modes
      * (exact-amount and move-all).
      */
@@ -574,7 +574,7 @@ contract InterestPropertiesTest is Test {
     /**
      * @dev The ledger can never be moved into the two forbidden sinks:
      * the zero address and the InterestRateProxy (== the contract).
-     * Every such attempt reverts and leaves both ledgers untouched —
+     * Every such attempt reverts and leaves both ledgers untouched -
      * for any balances, any amount and both move modes.
      */
     function testFuzz_INT1_moveToForbiddenTargetReverts(
@@ -616,7 +616,7 @@ contract InterestPropertiesTest is Test {
     /**
      * @dev Overdraw is impossible: an exact-amount move of more than
      * the available cashed interest (and any move of zero) reverts and
-     * leaves both ledgers untouched — the sender can never go negative
+     * leaves both ledgers untouched - the sender can never go negative
      * and the target can never be credited out of thin air.
      */
     function testFuzz_INT1_moveOverdrawReverts(
@@ -668,7 +668,7 @@ contract InterestPropertiesTest is Test {
     /**
      * @dev Accrual lockstep: banking a user's pending interest adds
      * exactly that pending amount to both the user's ledger and the
-     * global `totalCashedInterest` accumulator — for any balance and
+     * global `totalCashedInterest` accumulator - for any balance and
      * any accrual window up to a year.
      */
     function testFuzz_INT7_assignAddsPendingToTotal(
@@ -725,7 +725,7 @@ contract InterestPropertiesTest is Test {
     /**
      * @dev Full-claim lockstep: zeroing a user's ledger debits the
      * global accumulator by exactly the zeroed amount and leaves every
-     * other ledger untouched — for any consistent pre-state.
+     * other ledger untouched - for any consistent pre-state.
      */
     function testFuzz_INT7_prepareClaimSubtractsExactly(
         uint256 _cashedUser,
@@ -774,7 +774,7 @@ contract InterestPropertiesTest is Test {
 
     /**
      * @dev Exact-amount lockstep: debiting a user's ledger by a chosen
-     * amount debits the global accumulator by exactly that amount —
+     * amount debits the global accumulator by exactly that amount -
      * for any consistent pre-state and any amount within the ledger.
      */
     function testFuzz_INT7_prepareExactAmountSubtractsExactly(
@@ -816,7 +816,7 @@ contract InterestPropertiesTest is Test {
 
     /**
      * @dev Overdraw / zero-amount claims revert and leave both the
-     * user's ledger and the global accumulator untouched — the
+     * user's ledger and the global accumulator untouched - the
      * accumulator can never be debited past the ledger it mirrors.
      */
     function testFuzz_INT7_prepareExactAmountOverdrawRevertsNoChange(

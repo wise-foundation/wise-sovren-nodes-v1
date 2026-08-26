@@ -22,7 +22,7 @@ import {MockWise} from "./utils/mocks/MockWise.sol";
  * @dev A stand-in "next version" of {BurnWiseFacet} carrying a
  * LONGER (8-slot) burn schedule with different percentages
  * (3/7/12/25/9/4/18%/6%). Its `burnWise` / `getBurnableWise` /
- * `getNextBurnPercentage` signatures — hence selectors — match the
+ * `getNextBurnPercentage` signatures - hence selectors - match the
  * shipped facet, so it can be DELEGATECALL-swapped in through the
  * diamond's selector routing. Every slice stays below 100%.
  */
@@ -143,7 +143,7 @@ contract AltBurnWiseFacet is FacetBase {
 }
 
 /**
- * @dev Proves the WISE burn schedule is upgradeable by facet swap —
+ * @dev Proves the WISE burn schedule is upgradeable by facet swap -
  * no master-editable storage required. Deploys the diamond with the
  * shipped {BurnWiseFacet} (6-slot 5/10/20/15/5/1% schedule),
  * then re-points the burn selectors to an {AltBurnWiseFacet} (8-slot,
