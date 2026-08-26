@@ -312,7 +312,7 @@ abstract contract DiamondTestHarness is Test {
      * check because the harness deploys all 7 facets; etch a
      * minimal STOP at the canonical slot so the check passes. Tests
      * needing a real-ish Permit2 (the Permit2 facet test) etch a
-     * full mock BEFORE calling `_deployDiamond` — that prior etch
+     * full mock BEFORE calling `_deployDiamond` - that prior etch
      * is preserved here.
      */
     function _ensurePermit2()

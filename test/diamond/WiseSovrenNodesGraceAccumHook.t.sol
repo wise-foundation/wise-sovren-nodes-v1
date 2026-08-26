@@ -53,7 +53,7 @@ contract MockUSD is ERC20 {
  * single-call grace stamp exactly; once master arms the window,
  * sub-threshold deposits inside the rolling per-user window sum
  * toward `graceThresholdAmount` and stamp the same grace lock a lone
- * large deposit does — closing the split-deposit dodge end to end
+ * large deposit does - closing the split-deposit dodge end to end
  * (interest gate + freeze hook both read the one stamp). Covers the
  * timelocked propose/execute wiring, the never-routed hook selector,
  * dormant byte-equivalence, armed accumulation and window expiry,

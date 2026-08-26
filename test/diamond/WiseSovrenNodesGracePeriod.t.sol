@@ -56,7 +56,7 @@ contract MockUSD is ERC20 {
 
 /**
  * @dev Fee-quoting sink for outbound bridges: `getFee` returns a flat
- * fee and `ccipSend` just mints a message id. No relay — the grace
+ * fee and `ccipSend` just mints a message id. No relay - the grace
  * tests only assert that outbound bridging stays open during grace.
  */
 contract MockRouterSink {

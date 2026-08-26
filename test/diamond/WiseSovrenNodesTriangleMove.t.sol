@@ -52,9 +52,9 @@ contract MockUSD6 is ERC20 {
  * cross-registered as peers in every ordered direction via the
  * timelocked propose/execute flow, then a user round-trips the full
  * triangle. Every leg must relocate `totalDepositCap` with the moved
- * shares — destination cap up by the moved amount, source cap down
+ * shares - destination cap up by the moved amount, source cap down
  * by the same amount, room (`totalDepositCap - totalSupply()`)
- * unchanged on both ends — and the full six-direction round trip
+ * unchanged on both ends - and the full six-direction round trip
  * must return every cap exactly to its genesis value (the A->B->A
  * over-mint regression at triangle scale). Also proves the
  * dormant-chain gate (`depositsDisabled`, the posture a chain ships in)

@@ -47,7 +47,7 @@ contract MockUSD is ERC20 {
 
 /**
  * @dev Unit coverage for `switchQueIncentive` / `switchQueIncentivePartial`
- * — the fused "move an order to another incentive queue without the
+ * - the fused "move an order to another incentive queue without the
  * leave-then-rejoin token round-trip" surface. Storage-equivalence vs the
  * two-call baselines lives in the sibling equivalence suite.
  */

@@ -5,7 +5,7 @@
 #
 #   product   usdc                 (selects config/vault_mesh.<product>[.testnet].json)
 #   dryrun    fork-simulate the deploy on every chain, no broadcast (preflight incl.
-#             CreateX/Permit2 presence + canonical address match) — run this first;
+#             CreateX/Permit2 presence + canonical address match) - run this first;
 #             delete the config/vault.<product>.<net>.json files it writes afterwards
 #   deploy    broadcast the deterministic deploy on every chain (--slow, verified)
 #   peers     RegisterCrossChainPeers on every chain (pre-finalize: instant)

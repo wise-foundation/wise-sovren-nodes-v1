@@ -14,7 +14,7 @@ import {QueueInvariantHandler, MockUSD} from "./QueueConservationInvariant.t.sol
 
 /**
  * @dev Extends the conservation handler with actions that target
- * ARBITRARY member ids — not just the lane head — so mid-list
+ * ARBITRARY member ids - not just the lane head - so mid-list
  * removals, below-cursor attempts and partial fulfillments are all
  * exercised. This is exactly the traffic that would desync the
  * cursor from the lowest live order if the pointer splicing in
@@ -153,7 +153,7 @@ contract QueueCursorHandler is QueueInvariantHandler {
  * @title QueueCursorInvariantTest
  * @dev Stateful-fuzz form of QUE-10: for every incentive lane, the
  * fulfillment cursor `currentOrderIdByIncentive` always points at the
- * LOWEST live order id (strict FIFO — the oldest unfulfilled order is
+ * LOWEST live order id (strict FIFO - the oldest unfulfilled order is
  * always next), and when a lane is empty the cursor is parked exactly
  * at the lane's allocation edge `earliestValidQueMemberByIncentive`.
  * The Kontrol per-operation lemmas in

@@ -11,9 +11,9 @@ import {WiseSovrenNodesInitParams} from "../../../src/diamond/vault/WiseSovrenNo
  * configured `interestRate`, and the whole interest-helper chain are
  * the real production code. It then exposes the otherwise-internal
  * accrual primitives plus narrow storage setters so a symbolic (Kontrol)
- * or fuzz (Foundry) driver can place the relevant slots — balanceOf,
+ * or fuzz (Foundry) driver can place the relevant slots - balanceOf,
  * proxyBalance, lastSyncTimeStamp, interestRate, cashedInterest and
- * currentProxyBenefactor — into an arbitrary state without routing
+ * currentProxyBenefactor - into an arbitrary state without routing
  * through the diamond fallback.
  *
  * Nothing here alters vault logic: every `exposed*` call forwards

@@ -50,7 +50,7 @@ contract MockUSD is ERC20 {
  * the sender's whole cashed interest to the recipient (tolerant of a
  * zero balance). Proves the DELEGATECALL plumbing is transparent AND
  * that a delegatecalled hook writes the correct diamond storage slots.
- * Test-only — never added to src/, a deploy script, or a selector
+ * Test-only - never added to src/, a deploy script, or a selector
  * list.
  */
 contract IdentityTransferHookFacet is FacetBase {

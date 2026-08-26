@@ -22,7 +22,7 @@ import {MockWise} from "./utils/mocks/MockWise.sol";
  * @dev Non-fork coverage for the configurable WISE token: the
  * `setWiseToken` master setter, the `address(0)` revert path on
  * chains with no WISE, and a full mint/burn round-trip against a
- * locally deployed {MockWise} — no mainnet fork required.
+ * locally deployed {MockWise} - no mainnet fork required.
  */
 contract WiseSovrenNodesBurnWiseConfigurableTest is Test {
 

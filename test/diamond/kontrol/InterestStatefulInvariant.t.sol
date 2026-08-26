@@ -48,9 +48,9 @@ contract MockUSD is ERC20 {
  * action routes through the real facets (fallback + DELEGATECALL) so the
  * production dispatch path is exercised, not a shortcut. The handler
  * deliberately includes the moves most likely to leak interest onto the
- * contract itself — transferring vault tokens to it, minting supply to
+ * contract itself - transferring vault tokens to it, minting supply to
  * it, attributing proxy balance to it, naming it as its own benefactor
- * and then triggering assignment — so the fuzzer actively tries to break
+ * and then triggering assignment - so the fuzzer actively tries to break
  * the {InterestInvariantTest} invariant.
  */
 contract InterestInvariantHandler is Test {
@@ -201,7 +201,7 @@ contract InterestInvariantHandler is Test {
      * @dev BUF-3 probe: top the vault up (the worker refill a
      * sweeper races against), sweep as the granted sweeper, and
      * verify a successful sweep leaves the balance at exactly the
-     * needed reserve — the two-week forward buffer plus the settled
+     * needed reserve - the two-week forward buffer plus the settled
      * `totalCashedInterest` liability. Deviations accumulate in a
      * ghost because handler reverts are swallowed by the runner.
      */

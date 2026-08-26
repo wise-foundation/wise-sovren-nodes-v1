@@ -11,7 +11,7 @@ import {WiseSovrenNodesInitParams} from "../../../src/diamond/vault/WiseSovrenNo
  * @dev Minimal same-chain peer: a move-out DELEGATECALLs nothing here,
  * it makes a real external call `IPeerVault(dst).mintFromPeer(user,
  * dstAmount)` and reads `IERC20Metadata(dst).decimals()` to scale. The
- * mock answers both — `decimals() == 6` matches the source so the
+ * mock answers both - `decimals() == 6` matches the source so the
  * amount scales 1:1 with no dust, and `mintFromPeer` is a no-op that
  * never reverts, so the destination leg never masks a source-side
  * accounting result. The proof is about the SOURCE vault's ledger.
@@ -45,7 +45,7 @@ contract MockMovePeer {
  * per-vault room (`totalDepositCap - totalSupply`) is invariant and
  * the destination's matching `_raiseDepositCap` conserves mesh-wide
  * Σ totalDepositCap. Pending interest is no longer compounded by the
- * move — the facet's `assignInterest` modifier banks it into
+ * move - the facet's `assignInterest` modifier banks it into
  * `cashedInterest` without minting, and the internal `_executeMoveOut`
  * proven here touches no interest state at all, so the exact-delta law
  * carries no pending term and no `USD_TOKEN` moves.
@@ -114,8 +114,8 @@ contract MoveOutPropertiesTest is Test {
      * @dev MOV-1: for ANY mover balance, move amount and deposit cap
      * in the reachable region (`totalSupply <= totalDepositCap`), a
      * successful move-out of `amount` moves the ledger by its exact
-     * relocation deltas — the burn drops supply by `amount` and
-     * `_reduceDepositCap` drops the cap by the same `amount` — so room
+     * relocation deltas - the burn drops supply by `amount` and
+     * `_reduceDepositCap` drops the cap by the same `amount` - so room
      * (`totalDepositCap - totalSupply`) is invariant and
      * `totalSupply <= totalDepositCap` is preserved. A full year of
      * accrued pending interest stands on the mover's balance, and the
@@ -209,7 +209,7 @@ contract MoveOutPropertiesTest is Test {
      * (room 0) can always move out, and the move relocates the cap by
      * the full amount. Supply 5000 at cap 5000; a year accrues 1000
      * pending on the mover; moving 1000 leaves supply 4000 at cap
-     * 4000 — room still exactly 0, nothing minted, nothing banked. A
+     * 4000 - room still exactly 0, nothing minted, nothing banked. A
      * naive implementation that forgets the `_reduceDepositCap`
      * relocation leaves the cap at 5000 (room falsely 1000); one that
      * treats the move as a cap-gated deposit, or reduces the cap

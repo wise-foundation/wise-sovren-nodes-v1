@@ -7,7 +7,7 @@
 # test/diamond/storage_snapshot/ still matches the compiled diamond.
 #
 # Every facet is entered via DELEGATECALL into the diamond's storage, so
-# a single facet disagreeing about any slot silently corrupts state —
+# a single facet disagreeing about any slot silently corrupts state -
 # this check turns that class of bug into a loud CI failure with a
 # unified diff. Run from anywhere; requires forge + python3.
 set -euo pipefail

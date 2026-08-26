@@ -41,7 +41,7 @@ contract MockUSD is ERC20 {
 
 /**
  * @dev Covers the product's rate schedule: launch at forty percent,
- * then a cut to twenty by a plain master `setInterestRate` call —
+ * then a cut to twenty by a plain master `setInterestRate` call -
  * deliberately no further machinery.
  *
  * The property worth pinning is what that plain call does to accrual

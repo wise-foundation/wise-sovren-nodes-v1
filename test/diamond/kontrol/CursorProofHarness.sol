@@ -91,8 +91,8 @@ contract MockStable {
  * share pull-in and the event).
  *
  * `exposedLeaveCore` replays the exact mutation sequence of
- * {QueueJoinLeaveFacet.leaveQue} — cursor advance, removal with
- * accounting, share pay-out — and `exposedProcessOrder` calls the real
+ * {QueueJoinLeaveFacet.leaveQue} - cursor advance, removal with
+ * accounting, share pay-out - and `exposedProcessOrder` calls the real
  * `_processOrder` fulfillment path verbatim, USD leg included. Nothing
  * here alters vault logic.
  */
