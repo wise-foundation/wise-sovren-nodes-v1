@@ -1,7 +1,7 @@
 {
   "storage": [
     {
-      "astId": 48278,
+      "astId": 48394,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "master",
       "offset": 0,
@@ -9,7 +9,7 @@
       "type": "t_address"
     },
     {
-      "astId": 48280,
+      "astId": 48396,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "proposedMaster",
       "offset": 0,
@@ -73,7 +73,7 @@
       "type": "t_string_storage"
     },
     {
-      "astId": 49456,
+      "astId": 49887,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "USD_TOKEN",
       "offset": 0,
@@ -81,7 +81,7 @@
       "type": "t_contract(IERC20)41572"
     },
     {
-      "astId": 49458,
+      "astId": 49889,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "interestRate",
       "offset": 0,
@@ -89,7 +89,7 @@
       "type": "t_uint256"
     },
     {
-      "astId": 49460,
+      "astId": 49891,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "decimalsSet",
       "offset": 0,
@@ -97,7 +97,7 @@
       "type": "t_uint8"
     },
     {
-      "astId": 49462,
+      "astId": 49893,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "thirdPartyAddress",
       "offset": 1,
@@ -105,7 +105,7 @@
       "type": "t_address"
     },
     {
-      "astId": 49464,
+      "astId": 49895,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "InterestRateProxy",
       "offset": 0,
@@ -113,7 +113,7 @@
       "type": "t_address"
     },
     {
-      "astId": 49466,
+      "astId": 49897,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "currentProxyBenefactor",
       "offset": 0,
@@ -121,7 +121,7 @@
       "type": "t_address"
     },
     {
-      "astId": 49468,
+      "astId": 49899,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "supplyChangeByOwnerNotAllowed",
       "offset": 20,
@@ -129,7 +129,7 @@
       "type": "t_bool"
     },
     {
-      "astId": 49470,
+      "astId": 49901,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "totalDepositCap",
       "offset": 0,
@@ -137,7 +137,7 @@
       "type": "t_uint256"
     },
     {
-      "astId": 49751,
+      "astId": 50182,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "lastSyncTimeStamp",
       "offset": 0,
@@ -145,7 +145,7 @@
       "type": "t_mapping(t_address,t_uint256)"
     },
     {
-      "astId": 49755,
+      "astId": 50186,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "cashedInterest",
       "offset": 0,
@@ -153,7 +153,7 @@
       "type": "t_mapping(t_address,t_uint256)"
     },
     {
-      "astId": 49621,
+      "astId": 50052,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "proxyBalance",
       "offset": 0,
@@ -161,7 +161,7 @@
       "type": "t_mapping(t_address,t_uint256)"
     },
     {
-      "astId": 50407,
+      "astId": 50727,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "workerAddress",
       "offset": 0,
@@ -169,7 +169,7 @@
       "type": "t_address"
     },
     {
-      "astId": 50409,
+      "astId": 50729,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "bufferInterestRate",
       "offset": 0,
@@ -177,7 +177,7 @@
       "type": "t_uint256"
     },
     {
-      "astId": 50411,
+      "astId": 50731,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "proposedWorkerAddress",
       "offset": 0,
@@ -185,7 +185,7 @@
       "type": "t_address"
     },
     {
-      "astId": 50413,
+      "astId": 50733,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "workerChangeQueuedAt",
       "offset": 0,
@@ -193,7 +193,7 @@
       "type": "t_uint256"
     },
     {
-      "astId": 49606,
+      "astId": 50037,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "peerVault",
       "offset": 0,
@@ -201,7 +201,7 @@
       "type": "t_mapping(t_address,t_bool)"
     },
     {
-      "astId": 49610,
+      "astId": 50041,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "peerVaultChangeQueuedAt",
       "offset": 0,
@@ -209,7 +209,7 @@
       "type": "t_mapping(t_address,t_uint256)"
     },
     {
-      "astId": 49690,
+      "astId": 50121,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "selectorToFacet",
       "offset": 0,
@@ -217,7 +217,7 @@
       "type": "t_mapping(t_bytes4,t_address)"
     },
     {
-      "astId": 49694,
+      "astId": 50125,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "proposedSelectorFacet",
       "offset": 0,
@@ -225,7 +225,7 @@
       "type": "t_mapping(t_bytes4,t_address)"
     },
     {
-      "astId": 49698,
+      "astId": 50129,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "selectorChangeQueuedAt",
       "offset": 0,
@@ -233,7 +233,7 @@
       "type": "t_mapping(t_bytes4,t_uint256)"
     },
     {
-      "astId": 49700,
+      "astId": 50131,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "initialized",
       "offset": 0,
@@ -241,15 +241,15 @@
       "type": "t_bool"
     },
     {
-      "astId": 49647,
+      "astId": 50078,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "QueMemberByIdAndIncentive",
       "offset": 0,
       "slot": "27",
-      "type": "t_mapping(t_uint256,t_mapping(t_int256,t_struct(QueMember)49352_storage))"
+      "type": "t_mapping(t_uint256,t_mapping(t_int256,t_struct(QueMember)49767_storage))"
     },
     {
-      "astId": 49651,
+      "astId": 50082,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "earliestValidQueMemberByIncentive",
       "offset": 0,
@@ -257,7 +257,7 @@
       "type": "t_mapping(t_int256,t_uint256)"
     },
     {
-      "astId": 49655,
+      "astId": 50086,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "currentOrderIdByIncentive",
       "offset": 0,
@@ -265,7 +265,7 @@
       "type": "t_mapping(t_int256,t_uint256)"
     },
     {
-      "astId": 49659,
+      "astId": 50090,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "incentiveAllowed",
       "offset": 0,
@@ -273,7 +273,7 @@
       "type": "t_mapping(t_int256,t_bool)"
     },
     {
-      "astId": 49663,
+      "astId": 50094,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "activeOrderCountByIncentive",
       "offset": 0,
@@ -281,7 +281,7 @@
       "type": "t_mapping(t_int256,t_uint256)"
     },
     {
-      "astId": 49665,
+      "astId": 50096,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "totalActiveOrders",
       "offset": 0,
@@ -289,7 +289,7 @@
       "type": "t_uint256"
     },
     {
-      "astId": 49627,
+      "astId": 50058,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "minDepositAmount",
       "offset": 0,
@@ -297,7 +297,7 @@
       "type": "t_uint256"
     },
     {
-      "astId": 49629,
+      "astId": 50060,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "negativeIncentivesNotAllowed",
       "offset": 0,
@@ -305,7 +305,7 @@
       "type": "t_bool"
     },
     {
-      "astId": 49496,
+      "astId": 49927,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "ccipRouter",
       "offset": 1,
@@ -313,7 +313,7 @@
       "type": "t_address"
     },
     {
-      "astId": 49500,
+      "astId": 49931,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "crossChainPeer",
       "offset": 0,
@@ -321,7 +321,7 @@
       "type": "t_mapping(t_uint64,t_address)"
     },
     {
-      "astId": 49504,
+      "astId": 49935,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "crossChainPeerEnabled",
       "offset": 0,
@@ -329,7 +329,7 @@
       "type": "t_mapping(t_uint64,t_bool)"
     },
     {
-      "astId": 49508,
+      "astId": 49939,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "crossChainPeerDecimals",
       "offset": 0,
@@ -337,7 +337,7 @@
       "type": "t_mapping(t_uint64,t_uint8)"
     },
     {
-      "astId": 49512,
+      "astId": 49943,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "crossChainPeerChangeQueuedAt",
       "offset": 0,
@@ -345,7 +345,7 @@
       "type": "t_mapping(t_uint64,t_uint256)"
     },
     {
-      "astId": 49761,
+      "astId": 50192,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "WISE_TOKEN",
       "offset": 0,
@@ -353,7 +353,7 @@
       "type": "t_address"
     },
     {
-      "astId": 49420,
+      "astId": 49851,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "processedMessageId",
       "offset": 0,
@@ -361,7 +361,7 @@
       "type": "t_mapping(t_bytes32,t_bool)"
     },
     {
-      "astId": 49424,
+      "astId": 49855,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "proposedCrossChainPeer",
       "offset": 0,
@@ -369,7 +369,7 @@
       "type": "t_mapping(t_uint64,t_address)"
     },
     {
-      "astId": 49428,
+      "astId": 49859,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "proposedCrossChainPeerDecimals",
       "offset": 0,
@@ -377,7 +377,7 @@
       "type": "t_mapping(t_uint64,t_uint8)"
     },
     {
-      "astId": 49717,
+      "astId": 50148,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "proposedThirdPartyAddress",
       "offset": 0,
@@ -385,7 +385,7 @@
       "type": "t_address"
     },
     {
-      "astId": 49719,
+      "astId": 50150,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "thirdPartyChangeQueuedAt",
       "offset": 0,
@@ -393,7 +393,7 @@
       "type": "t_uint256"
     },
     {
-      "astId": 49728,
+      "astId": 50159,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "transferHookFacet",
       "offset": 0,
@@ -401,7 +401,7 @@
       "type": "t_address"
     },
     {
-      "astId": 49730,
+      "astId": 50161,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "proposedTransferHookFacet",
       "offset": 0,
@@ -409,7 +409,7 @@
       "type": "t_address"
     },
     {
-      "astId": 49732,
+      "astId": 50163,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "transferHookChangeQueuedAt",
       "offset": 0,
@@ -417,7 +417,7 @@
       "type": "t_uint256"
     },
     {
-      "astId": 49434,
+      "astId": 49865,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "burnWiseIndex",
       "offset": 0,
@@ -425,7 +425,7 @@
       "type": "t_uint256"
     },
     {
-      "astId": 49438,
+      "astId": 49869,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "lastBurnWiseAt",
       "offset": 0,
@@ -433,7 +433,7 @@
       "type": "t_mapping(t_address,t_uint256)"
     },
     {
-      "astId": 49671,
+      "astId": 50102,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "referralEnabled",
       "offset": 0,
@@ -441,7 +441,7 @@
       "type": "t_bool"
     },
     {
-      "astId": 49673,
+      "astId": 50104,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "bridgeGasLimit",
       "offset": 1,
@@ -449,7 +449,7 @@
       "type": "t_uint64"
     },
     {
-      "astId": 49546,
+      "astId": 49977,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "depositsDisabled",
       "offset": 9,
@@ -457,7 +457,7 @@
       "type": "t_bool"
     },
     {
-      "astId": 49573,
+      "astId": 50004,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "gracePeriodDuration",
       "offset": 0,
@@ -465,7 +465,7 @@
       "type": "t_uint256"
     },
     {
-      "astId": 49575,
+      "astId": 50006,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "graceThresholdAmount",
       "offset": 0,
@@ -473,7 +473,7 @@
       "type": "t_uint256"
     },
     {
-      "astId": 49579,
+      "astId": 50010,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "lastLargeDepositAt",
       "offset": 0,
@@ -481,7 +481,7 @@
       "type": "t_mapping(t_address,t_uint256)"
     },
     {
-      "astId": 49581,
+      "astId": 50012,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "graceFreezeEnabled",
       "offset": 0,
@@ -489,7 +489,7 @@
       "type": "t_bool"
     },
     {
-      "astId": 49552,
+      "astId": 49983,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "depositHookFacet",
       "offset": 1,
@@ -497,7 +497,7 @@
       "type": "t_address"
     },
     {
-      "astId": 49554,
+      "astId": 49985,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "proposedDepositHookFacet",
       "offset": 0,
@@ -505,7 +505,7 @@
       "type": "t_address"
     },
     {
-      "astId": 49556,
+      "astId": 49987,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "depositHookChangeQueuedAt",
       "offset": 0,
@@ -513,7 +513,7 @@
       "type": "t_uint256"
     },
     {
-      "astId": 49524,
+      "astId": 49955,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "depositAccumWindow",
       "offset": 0,
@@ -521,7 +521,7 @@
       "type": "t_uint256"
     },
     {
-      "astId": 49528,
+      "astId": 49959,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "depositWindowStart",
       "offset": 0,
@@ -529,7 +529,7 @@
       "type": "t_mapping(t_address,t_uint256)"
     },
     {
-      "astId": 49532,
+      "astId": 49963,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "depositWindowTotal",
       "offset": 0,
@@ -537,7 +537,7 @@
       "type": "t_mapping(t_address,t_uint256)"
     },
     {
-      "astId": 49447,
+      "astId": 49878,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "totalCashedInterest",
       "offset": 0,
@@ -545,7 +545,7 @@
       "type": "t_uint256"
     },
     {
-      "astId": 49711,
+      "astId": 50142,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "isSweeper",
       "offset": 0,
@@ -553,7 +553,7 @@
       "type": "t_mapping(t_address,t_bool)"
     },
     {
-      "astId": 49540,
+      "astId": 49971,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "depositWindowPrevTotal",
       "offset": 0,
@@ -561,12 +561,36 @@
       "type": "t_mapping(t_address,t_uint256)"
     },
     {
-      "astId": 49598,
+      "astId": 50029,
       "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
       "label": "interestRemainder",
       "offset": 0,
       "slot": "63",
       "type": "t_mapping(t_address,t_uint256)"
+    },
+    {
+      "astId": 49834,
+      "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
+      "label": "isAutoCompoundBot",
+      "offset": 0,
+      "slot": "64",
+      "type": "t_mapping(t_address,t_bool)"
+    },
+    {
+      "astId": 49838,
+      "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
+      "label": "autoCompoundAllowed",
+      "offset": 0,
+      "slot": "65",
+      "type": "t_mapping(t_address,t_bool)"
+    },
+    {
+      "astId": 49840,
+      "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
+      "label": "autoCompoundFeeBps",
+      "offset": 0,
+      "slot": "66",
+      "type": "t_uint256"
     }
   ],
   "types": {
@@ -649,12 +673,12 @@
       "numberOfBytes": "32",
       "value": "t_bool"
     },
-    "t_mapping(t_int256,t_struct(QueMember)49352_storage)": {
+    "t_mapping(t_int256,t_struct(QueMember)49767_storage)": {
       "encoding": "mapping",
       "key": "t_int256",
       "label": "mapping(int256 => struct WiseSovrenNodesQueueStructs.QueMember)",
       "numberOfBytes": "32",
-      "value": "t_struct(QueMember)49352_storage"
+      "value": "t_struct(QueMember)49767_storage"
     },
     "t_mapping(t_int256,t_uint256)": {
       "encoding": "mapping",
@@ -663,12 +687,12 @@
       "numberOfBytes": "32",
       "value": "t_uint256"
     },
-    "t_mapping(t_uint256,t_mapping(t_int256,t_struct(QueMember)49352_storage))": {
+    "t_mapping(t_uint256,t_mapping(t_int256,t_struct(QueMember)49767_storage))": {
       "encoding": "mapping",
       "key": "t_uint256",
       "label": "mapping(uint256 => mapping(int256 => struct WiseSovrenNodesQueueStructs.QueMember))",
       "numberOfBytes": "32",
-      "value": "t_mapping(t_int256,t_struct(QueMember)49352_storage)"
+      "value": "t_mapping(t_int256,t_struct(QueMember)49767_storage)"
     },
     "t_mapping(t_uint64,t_address)": {
       "encoding": "mapping",
@@ -703,13 +727,13 @@
       "label": "string",
       "numberOfBytes": "32"
     },
-    "t_struct(QueMember)49352_storage": {
+    "t_struct(QueMember)49767_storage": {
       "encoding": "inplace",
       "label": "struct WiseSovrenNodesQueueStructs.QueMember",
       "numberOfBytes": "128",
       "members": [
         {
-          "astId": 49345,
+          "astId": 49760,
           "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
           "label": "member",
           "offset": 0,
@@ -717,7 +741,7 @@
           "type": "t_address"
         },
         {
-          "astId": 49347,
+          "astId": 49762,
           "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
           "label": "amount",
           "offset": 0,
@@ -725,7 +749,7 @@
           "type": "t_uint256"
         },
         {
-          "astId": 49349,
+          "astId": 49764,
           "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
           "label": "tailPointer",
           "offset": 0,
@@ -733,7 +757,7 @@
           "type": "t_uint256"
         },
         {
-          "astId": 49351,
+          "astId": 49766,
           "contract": "src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond",
           "label": "headPointer",
           "offset": 0,

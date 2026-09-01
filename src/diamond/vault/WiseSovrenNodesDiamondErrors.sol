@@ -149,4 +149,12 @@ abstract contract WiseSovrenNodesDiamondErrors {
     error SameIncentive();
 
     error ProtectedToken();
+
+    // ---- Auto-compound ----
+
+    error NotAutoCompoundBot();
+
+    error AutoCompoundNotAllowed();
+
+    error AutoCompoundFeeTooHigh();
 }

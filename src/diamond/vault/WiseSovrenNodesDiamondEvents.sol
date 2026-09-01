@@ -405,4 +405,27 @@ abstract contract WiseSovrenNodesDiamondEvents {
         int256 indexed incentive,
         bool allowed
     );
+
+    // ---- Auto-compound ----
+
+    event CompoundInterestOnBehalf(
+        address indexed user,
+        address indexed bot,
+        uint256 netAmount,
+        uint256 feeAmount
+    );
+
+    event AutoCompoundBotSet(
+        address indexed bot,
+        bool allowed
+    );
+
+    event AutoCompoundAllowedSet(
+        address indexed user,
+        bool allowed
+    );
+
+    event AutoCompoundFeeBpsSet(
+        uint256 autoCompoundFeeBps
+    );
 }
