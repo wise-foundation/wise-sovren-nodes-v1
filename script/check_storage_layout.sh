@@ -17,6 +17,7 @@ DIAMOND="src/diamond/vault/WiseSovrenNodesDiamond.sol:WiseSovrenNodesDiamond"
 SNAPSHOT="test/diamond/storage_snapshot/vault_diamond_layout.json"
 FACETS=(
     AdminFacet
+    AutoCompoundFacet
     BridgeFacet
     BurnWiseFacet
     CashedInterestFacet

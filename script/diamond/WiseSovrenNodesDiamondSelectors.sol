@@ -18,8 +18,37 @@ import {QueueFulfillFacet} from "../../src/diamond/vault/facets/QueueFulfillFace
 import {QueueForecastFacet} from "../../src/diamond/vault/facets/QueueForecastFacet.sol";
 import {InterestAdminFacet} from "../../src/diamond/vault/facets/InterestAdminFacet.sol";
 import {RescueFacet} from "../../src/diamond/vault/facets/RescueFacet.sol";
+import {AutoCompoundFacet} from "../../src/diamond/vault/facets/AutoCompoundFacet.sol";
 import {WiseSovrenNodesQueueUIHelper} from "../../src/diamond/vault/helpers/WiseSovrenNodesQueueUIHelper.sol";
 import {WiseSovrenNodesQueueHelper} from "../../src/diamond/vault/helpers/WiseSovrenNodesQueueHelper.sol";
+
+/**
+ * @dev Getter mirror of the auto-compound tail shard: Solidity
+ * exposes no `.selector` for public state variables, so the routed
+ * getter selectors come from here. Signature parity is asserted by
+ * the facet tests and the live-fork getter reads.
+ */
+interface IAutoCompoundGetters {
+
+    function isAutoCompoundBot(
+        address _bot
+    )
+        external
+        view
+        returns (bool);
+
+    function autoCompoundAllowed(
+        address _user
+    )
+        external
+        view
+        returns (bool);
+
+    function autoCompoundFeeBps()
+        external
+        view
+        returns (uint256);
+}
 
 /**
  * @dev Single source of truth for WiseSovrenNodes facet selectors.
@@ -29,7 +58,10 @@ import {WiseSovrenNodesQueueHelper} from "../../src/diamond/vault/helpers/WiseSo
  * Counts: admin=27, proxy=3, user=8, sweep=2, cashedInterest=1,
  * queueForecast=1, interestAdmin=3, rescue=1, burnWise=3, move=7,
  * bridge=14, permit2=3, multicall=1, queueAdmin=3, queueJoinLeave=5,
- * queueFulfill=4, queueView=10 — total 96, all wired at genesis.
+ * queueFulfill=4, queueView=10 — 96 wired at genesis;
+ * autoCompound=7 (4 functions + the 3 shard getters, which the
+ * frozen live dispatcher cannot serve) routed post-genesis via the
+ * selector timelock — total 103.
  */
 library WiseSovrenNodesDiamondSelectors {
 
@@ -263,5 +295,20 @@ library WiseSovrenNodesDiamondSelectors {
         sels[7] = WiseSovrenNodesQueueHelper._solveForAmountWithIncentive.selector;
         sels[8] = WiseSovrenNodesQueueUIHelper.getAllOrdersOverallWithId.selector;
         sels[9] = WiseSovrenNodesQueueUIHelper.getAllOrdersfromAddressWithId.selector;
+    }
+
+    function autoCompoundSelectors()
+        internal
+        pure
+        returns (bytes4[] memory sels)
+    {
+        sels = new bytes4[](7);
+        sels[0] = AutoCompoundFacet.compoundInterestOnBehalf.selector;
+        sels[1] = AutoCompoundFacet.setAutoCompoundAllowed.selector;
+        sels[2] = AutoCompoundFacet.setAutoCompoundBot.selector;
+        sels[3] = AutoCompoundFacet.setAutoCompoundFeeBps.selector;
+        sels[4] = IAutoCompoundGetters.isAutoCompoundBot.selector;
+        sels[5] = IAutoCompoundGetters.autoCompoundAllowed.selector;
+        sels[6] = IAutoCompoundGetters.autoCompoundFeeBps.selector;
     }
 }
