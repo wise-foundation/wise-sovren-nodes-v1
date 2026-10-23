@@ -72,3 +72,34 @@ forge test --match-path 'test/diamond/fork/*'
 ```bash
 forge coverage --no-match-path 'test/diamond/fork/*'
 ```
+
+## Referral system
+
+The vault joins the referral system shared with the WiseTelecomNodes vaults: one registry
+per chain, one hub on Ethereum mainnet, one rate table and one payout pot, all deployed and
+operated from the WiseTelecomNodes repository and recorded here in `config/registry.mainnet.json`
+and `config/hub.mainnet.json`. The vault side lives in `src/diamond/vault/facets/pending/`
+(the referral facets, the cohort engine, the flush transport), `src/diamond/shared/pending/`
+and `src/diamond/vault/declarations/pending/` (the tail shards at slots 67 to 95), and ships
+onto the live diamond through the selector timelock in two rounds. The registry round
+puts its fourteen facets onchain first and records them in
+`config/referral-round.<product>.<network>.json`; the propose step then routes the recorded
+facets without deploying again:
+
+```bash
+VAULT_PRODUCT=usdc forge script script/diamond/UpgradeReferralRegistry.s.sol --sig "deployFacets()" --rpc-url mainnet
+```
+
+```bash
+VAULT_PRODUCT=usdc forge script script/diamond/UpgradeReferralRegistry.s.sol --sig "propose()" --rpc-url mainnet
+```
+
+```bash
+VAULT_PRODUCT=usdc forge script script/diamond/UpgradeCohortFlush.s.sol --sig "propose()" --rpc-url mainnet
+```
+
+Each script documents its phases (propose, execute after three days, the pointer, the arm,
+the legacy bridge pair retirement). The registry and hub sources under `test/referral/` are
+compiled here only so the vault suites run against the real shared code; they are never
+deployed from this repository. `test/diamond/fork/WiseSovrenNodesReferralUpgradeFork.t.sol`
+rehearses the whole join on a mainnet fork.

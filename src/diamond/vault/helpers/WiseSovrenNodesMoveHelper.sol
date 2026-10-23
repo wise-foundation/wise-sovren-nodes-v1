@@ -31,6 +31,23 @@ import {IPeerVault} from "../interfaces/IPeerVault.sol";
  * `PEER_VAULT_CHANGE_DELAY`. Disabling is instant via
  * `removePeerVault` so a misbehaving peer can be quarantined
  * without waiting out the delay.
+ *
+ * Referral attribution: a same-chain move is a
+ * system relocation, so the cohort recorder CARRIES the moved slice
+ * of referral credit instead of destroying it. The exit path keeps
+ * the pre-burn `_cohortSync` (any pre-existing deficit clamps
+ * sale-like) and replaces the post-burn sync with `_cohortMoveOut`,
+ * which captures the reduction walk's exact slot pairs and stages
+ * them in the chain registry before `mintFromPeer` is called; the
+ * enter path adds `_cohortMoveIn` after the mint, which drains and
+ * replants them at the same slots in the same transaction. The user
+ * is by construction the same address on both ends — `mintFromPeer`
+ * is always called with `msg.sender` and carries no recipient
+ * parameter. Every attribution failure degrades soft (anomaly event,
+ * move unaffected); both stubs are inert until `cohortSyncEnabled`.
+ * Decimal scaling factors are computed once per move via
+ * `_peerScaleFactors` and shared by the amount scaling and the
+ * carry's per-component scaling.
  */
 abstract contract WiseSovrenNodesMoveHelper is WiseSovrenNodesBufferHelper {
 
@@ -151,24 +168,37 @@ abstract contract WiseSovrenNodesMoveHelper is WiseSovrenNodesBufferHelper {
             InsufficientBalance()
         );
 
-        uint256 dust;
-
         (
-            dstAmount,
-            dust
-        ) = _scaleAmountForPeer(
-            _dstVault,
-            _amount
+            uint256 scaleNumerator,
+            uint256 scaleDenominator
+        ) = _peerScaleFactors(
+            _dstVault
         );
+
+        dstAmount = _amount * scaleNumerator / scaleDenominator;
+
+        uint256 dust = _amount - dstAmount * scaleDenominator / scaleNumerator;
 
         require(
             dstAmount > 0,
             MoveAmountTooSmall()
         );
 
+        _cohortSync(
+            msg.sender
+        );
+
         _burn(
             msg.sender,
             _amount
+        );
+
+        _cohortMoveOut(
+            msg.sender,
+            _dstVault,
+            _amount,
+            scaleNumerator,
+            scaleDenominator
         );
 
         _reduceDepositCap(
@@ -203,7 +233,13 @@ abstract contract WiseSovrenNodesMoveHelper is WiseSovrenNodesBufferHelper {
      * relocation, not new local origination: the cap is raised by the moved
      * amount via `_raiseDepositCap` before the mint, keeping the move
      * room-neutral on both ends and never reverting `DepositExceedCap` on a
-     * near-cap destination (BRG-5 / NI-2).
+     * near-cap destination — the same cap-relocation room law the
+     * bridge-receive path holds. The pre-mint `_cohortSync`
+     * clamps the user's pre-existing deficit against OLD tracked before
+     * the balance grows (clamp-before-mint, dip-healing closed); the
+     * post-mint `_cohortMoveIn` then replants the attribution the source
+     * staged for this move — ordered after the mint so replanted tracked
+     * never exceeds the held balance.
      */
     function _executeMintFromPeer(
         address _user,
@@ -225,9 +261,18 @@ abstract contract WiseSovrenNodesMoveHelper is WiseSovrenNodesBufferHelper {
             _amount
         );
 
+        _cohortSync(
+            _user
+        );
+
         _mint(
             _user,
             _amount
+        );
+
+        _cohortMoveIn(
+            _user,
+            msg.sender
         );
 
         emit MovedIn(
@@ -237,15 +282,14 @@ abstract contract WiseSovrenNodesMoveHelper is WiseSovrenNodesBufferHelper {
         );
     }
 
-    function _scaleAmountForPeer(
-        address _dstVault,
-        uint256 _srcAmount
+    function _peerScaleFactors(
+        address _dstVault
     )
         internal
         view
         returns (
-            uint256 dstAmount,
-            uint256 dust
+            uint256 numerator,
+            uint256 denominator
         )
     {
         uint8 srcDec = decimalsSet;
@@ -254,24 +298,17 @@ abstract contract WiseSovrenNodesMoveHelper is WiseSovrenNodesBufferHelper {
             _dstVault
         ).decimals();
 
-        if (srcDec == dstDec) {
+        if (dstDec >= srcDec) {
             return (
-                _srcAmount,
-                0
+                10 ** (dstDec - srcDec),
+                1
             );
         }
 
-        if (dstDec > srcDec) {
-            return (
-                _srcAmount * (10 ** (dstDec - srcDec)),
-                0
-            );
-        }
-
-        uint256 factor = 10 ** (srcDec - dstDec);
-
-        dstAmount = _srcAmount / factor;
-        dust = _srcAmount % factor;
+        return (
+            1,
+            10 ** (srcDec - dstDec)
+        );
     }
 
     function _getMoveableBalance(

@@ -116,6 +116,32 @@ abstract contract WiseSovrenNodesDiamondErrors {
 
     error InvalidBridgeGasLimit();
 
+    // ---- Referral registry ----
+
+    error SelfReferral();
+
+    error ReferralRegistryNotSet();
+
+    error NoReferralRegistryChangeProposed();
+
+    error ReferralRegistryTimelockNotElapsed();
+
+    error NotReferralRegistry();
+
+    error CohortSyncDisabled();
+
+    error ReferralDataReserved();
+
+    error ReferralRegistryChangeWhileArmed();
+
+    // ---- Cohort recorder ----
+
+    error CohortHookNotInstalled();
+
+    error NothingToSeed();
+
+    error SeedingLatched();
+
     // ---- Queue surface ----
 
     error ZeroAmount();
@@ -157,4 +183,41 @@ abstract contract WiseSovrenNodesDiamondErrors {
     error AutoCompoundNotAllowed();
 
     error AutoCompoundFeeTooHigh();
+
+    error ExceedsPendingPayout();
+
+    // ---- Cohort flush ----
+
+    error FlushHubNotSet();
+
+    error NoFlushHubChangeProposed();
+
+    error FlushHubTimelockNotElapsed();
+
+    error NotFlushBot();
+
+    error NothingToFlush();
+
+    error FlushBatchTooLarge();
+
+    error FlushWindowInvalid();
+
+    error InsufficientFlushFee();
+
+    error FlushRefundFailed();
+
+    error InvalidFlushGasLimit();
+
+    error CohortBridgeInOutOfGas(
+        address user,
+        uint64 srcChainSelector
+    );
+
+    error FlushOutageGraceActive();
+
+    error FlushCursorVirgin();
+
+    error FlushCadenceActive();
+
+    error FlushBookNotAdvanced();
 }

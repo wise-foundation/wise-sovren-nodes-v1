@@ -119,7 +119,7 @@ contract WiseSovrenNodesAutoCompoundFacetTest is DiamondTestHarness {
         _wireOne(
             diamond,
             address(new InterestAdminFacet()),
-            WiseSovrenNodesDiamondSelectors.interestAdminSelectors()
+            WiseSovrenNodesDiamondSelectors._interestAdminSelectors()
         );
 
         facetInstance = address(
@@ -129,7 +129,7 @@ contract WiseSovrenNodesAutoCompoundFacetTest is DiamondTestHarness {
         _wireOne(
             diamond,
             facetInstance,
-            WiseSovrenNodesDiamondSelectors.autoCompoundSelectors()
+            WiseSovrenNodesDiamondSelectors._autoCompoundSelectors()
         );
 
         diamond.finalizeSetup();
@@ -1029,7 +1029,7 @@ contract WiseSovrenNodesAutoCompoundFacetTest is DiamondTestHarness {
             0
         );
 
-        bytes4[] memory sels = WiseSovrenNodesDiamondSelectors.autoCompoundSelectors();
+        bytes4[] memory sels = WiseSovrenNodesDiamondSelectors._autoCompoundSelectors();
 
         for (uint256 i = 0; i < sels.length; i++) {
             assertEq(

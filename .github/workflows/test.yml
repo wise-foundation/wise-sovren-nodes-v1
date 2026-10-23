@@ -64,7 +64,7 @@ jobs:
       - name: Check no narrow incentive types remain
         run: |
           set -euo pipefail
-          if grep -rn 'int16' src/; then
+          if grep -rnw 'int16' src/; then
             echo "int16 found in src/: incentive tiers must be int256"
             exit 1
           fi

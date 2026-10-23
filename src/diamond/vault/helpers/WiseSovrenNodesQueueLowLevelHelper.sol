@@ -65,6 +65,10 @@ abstract contract WiseSovrenNodesQueueLowLevelHelper is WiseSovrenNodesHelper {
             address(this),
             _amount
         );
+
+        _cohortSync(
+            msg.sender
+        );
     }
 
     function _moveVaultTokens(
@@ -157,10 +161,6 @@ abstract contract WiseSovrenNodesQueueLowLevelHelper is WiseSovrenNodesHelper {
             _queMemberId,
             _incentive
         );
-
-        _requireIncentiveAllowed(
-            _incentive
-        );
     }
 
     function _hasNoOrdersToProcess(
@@ -189,10 +189,6 @@ abstract contract WiseSovrenNodesQueueLowLevelHelper is WiseSovrenNodesHelper {
 
         _requireValidMemberId(
             _queMemberId,
-            _incentive
-        );
-
-        _requireIncentiveAllowed(
             _incentive
         );
     }

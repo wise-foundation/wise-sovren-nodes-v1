@@ -410,7 +410,16 @@ abstract contract WiseSovrenNodesInterestHelper is WiseSovrenNodesProxyHelper {
             interest
         );
 
+        _cohortSync(
+            _user
+        );
+
         _mint(
+            _user,
+            interest
+        );
+
+        _cohortCredit(
             _user,
             interest
         );

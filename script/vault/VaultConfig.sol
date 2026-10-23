@@ -7,7 +7,7 @@ import {CCIPConfig} from "../ccip/CCIPConfig.sol";
 /// carries the product key (VAULT_PRODUCT env, default "usdc") so the USDC and USDT meshes keep
 /// fully parallel configs: config/vault.<product>.<network>.json records a deploy,
 /// config/vault_deploy.<product>.<network>.json holds the per-chain init params, and
-/// config/vault_mesh.<product>[.testnet].json is the mesh manifest — canonical CREATE3 address,
+/// config/vault_mesh.<product>[.testnet].json is the mesh manifest: canonical CREATE3 address,
 /// deployer EOA, salt tag, peer decimals and the chain list with per-chain active flags. The
 /// testnet manifest is selected automatically by chainid.
 abstract contract VaultConfig is CCIPConfig {
@@ -218,6 +218,241 @@ abstract contract VaultConfig is CCIPConfig {
         usd     = vm.parseJsonAddress(json, ".usd");
     }
 
+    function _registryPath(
+        string memory _network
+    )
+        internal
+        pure
+        returns (string memory)
+    {
+        return string.concat(
+            "config/registry.",
+            _network,
+            ".json"
+        );
+    }
+
+    function _registryConfigExists(
+        string memory _network
+    )
+        internal
+        returns (bool)
+    {
+        return vm.exists(
+            _registryPath(
+                _network
+            )
+        );
+    }
+
+    function _saveRegistry(
+        string memory _network,
+        address _registry
+    )
+        internal
+    {
+        string memory obj = "registry";
+
+        string memory out = vm.serializeAddress(
+            obj,
+            "registry",
+            _registry
+        );
+
+        vm.writeJson(
+            out,
+            _registryPath(
+                _network
+            )
+        );
+    }
+
+    function _loadRegistry(
+        string memory _network
+    )
+        internal
+        view
+        returns (address registry)
+    {
+        string memory json = vm.readFile(
+            _registryPath(
+                _network
+            )
+        );
+
+        registry = vm.parseJsonAddress(json, ".registry");
+    }
+
+    function _hubPath(
+        string memory _network
+    )
+        internal
+        pure
+        returns (string memory)
+    {
+        return string.concat(
+            "config/hub.",
+            _network,
+            ".json"
+        );
+    }
+
+    function _hubConfigExists(
+        string memory _network
+    )
+        internal
+        returns (bool)
+    {
+        return vm.exists(
+            _hubPath(
+                _network
+            )
+        );
+    }
+
+    function _saveHub(
+        string memory _network,
+        address _hub
+    )
+        internal
+    {
+        string memory obj = "hub";
+
+        string memory out = vm.serializeAddress(
+            obj,
+            "hub",
+            _hub
+        );
+
+        vm.writeJson(
+            out,
+            _hubPath(
+                _network
+            )
+        );
+    }
+
+    function _loadHub(
+        string memory _network
+    )
+        internal
+        view
+        returns (address hub)
+    {
+        string memory json = vm.readFile(
+            _hubPath(
+                _network
+            )
+        );
+
+        hub = vm.parseJsonAddress(json, ".hub");
+    }
+
+    function _ccipPath(
+        string memory _network
+    )
+        internal
+        pure
+        returns (string memory)
+    {
+        return string.concat(
+            "config/ccip.",
+            _network,
+            ".json"
+        );
+    }
+
+    function _loadCcipRouter(
+        string memory _network
+    )
+        internal
+        view
+        returns (address router)
+    {
+        router = vm.parseJsonAddress(
+            vm.readFile(
+                _ccipPath(
+                    _network
+                )
+            ),
+            ".router"
+        );
+    }
+
+    function _loadCcipChainSelector(
+        string memory _network
+    )
+        internal
+        view
+        returns (uint64)
+    {
+        return uint64(
+            vm.parseUint(
+                vm.parseJsonString(
+                    vm.readFile(
+                        _ccipPath(
+                            _network
+                        )
+                    ),
+                    ".chainSelector"
+                )
+            )
+        );
+    }
+
+    function _vaultConfigPath(
+        string memory _product,
+        string memory _network
+    )
+        internal
+        pure
+        returns (string memory)
+    {
+        return string.concat(
+            "config/vault.",
+            _product,
+            ".",
+            _network,
+            ".json"
+        );
+    }
+
+    function _loadVaultDiamond(
+        string memory _product,
+        string memory _network
+    )
+        internal
+        view
+        returns (address diamond)
+    {
+        string memory json = vm.readFile(
+            _vaultConfigPath(
+                _product,
+                _network
+            )
+        );
+
+        diamond = vm.parseJsonAddress(json, ".diamond");
+    }
+
+    function _loadVaultUsd(
+        string memory _product,
+        string memory _network
+    )
+        internal
+        view
+        returns (address usd)
+    {
+        string memory json = vm.readFile(
+            _vaultConfigPath(
+                _product,
+                _network
+            )
+        );
+
+        usd = vm.parseJsonAddress(json, ".usd");
+    }
+
     function _signoffPath(
         string memory _network
     )
@@ -239,7 +474,7 @@ abstract contract VaultConfig is CCIPConfig {
     /// a mainnet deploy reads (init params + mesh identity + CCIP endpoint), emitted at the
     /// sign-off gate; any later edit to the deploy, mesh or CCIP config that drifts from the
     /// approved lock aborts the broadcast. `vm.readFile` reverts when the lock is absent, so a
-    /// mainnet deploy can never run un-signed. Pure config-to-config comparison — no chain state.
+    /// mainnet deploy can never run un-signed. Pure config-to-config comparison, no chain state.
     function _assertSignoff(
         string memory _network
     )

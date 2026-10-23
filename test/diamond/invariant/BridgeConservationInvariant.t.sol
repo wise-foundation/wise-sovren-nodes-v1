@@ -308,7 +308,7 @@ contract BridgeConservationInvariantTest is DiamondTestHarness {
         _wireOne(
             d,
             address(new BridgeFacet()),
-            WiseSovrenNodesDiamondSelectors.bridgeSelectors()
+            WiseSovrenNodesDiamondSelectors._bridgeSelectors()
         );
     }
 

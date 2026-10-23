@@ -330,10 +330,10 @@ contract WiseSovrenNodesBridgeTest is Test {
             )
         );
 
-        bytes4[] memory adminSels = WiseSovrenNodesDiamondSelectors.adminSelectors();
-        bytes4[] memory userSels = WiseSovrenNodesDiamondSelectors.userSelectors();
-        bytes4[] memory bridgeSels = WiseSovrenNodesDiamondSelectors.bridgeSelectors();
-        bytes4[] memory cashedSels = WiseSovrenNodesDiamondSelectors.cashedInterestSelectors();
+        bytes4[] memory adminSels = WiseSovrenNodesDiamondSelectors._adminSelectors();
+        bytes4[] memory userSels = WiseSovrenNodesDiamondSelectors._userSelectors();
+        bytes4[] memory bridgeSels = WiseSovrenNodesDiamondSelectors._bridgeSelectors();
+        bytes4[] memory cashedSels = WiseSovrenNodesDiamondSelectors._cashedInterestSelectors();
 
         d.proposeSelectors(
             adminSels,

@@ -24,6 +24,8 @@ import {QueueForecastFacet} from "../../../src/diamond/vault/facets/QueueForecas
 import {InterestAdminFacet} from "../../../src/diamond/vault/facets/InterestAdminFacet.sol";
 import {RescueFacet} from "../../../src/diamond/vault/facets/RescueFacet.sol";
 
+import {ReferralRegistry} from "../../referral/registry/ReferralRegistry.sol";
+
 import {WiseSovrenNodesDiamondSelectors} from "../../../script/diamond/WiseSovrenNodesDiamondSelectors.sol";
 
 /**
@@ -165,67 +167,67 @@ abstract contract DiamondTestHarness is Test {
         _wireOne(
             d,
             address(new AdminFacet()),
-            WiseSovrenNodesDiamondSelectors.adminSelectors()
+            WiseSovrenNodesDiamondSelectors._adminSelectors()
         );
 
         _wireOne(
             d,
             address(new ProxyFacet()),
-            WiseSovrenNodesDiamondSelectors.proxySelectors()
+            WiseSovrenNodesDiamondSelectors._proxySelectors()
         );
 
         _wireOne(
             d,
             address(new UserFacet()),
-            WiseSovrenNodesDiamondSelectors.userSelectors()
+            WiseSovrenNodesDiamondSelectors._userSelectors()
         );
 
         _wireOne(
             d,
             address(new SweepFacet()),
-            WiseSovrenNodesDiamondSelectors.sweepSelectors()
+            WiseSovrenNodesDiamondSelectors._sweepSelectors()
         );
 
         _wireOne(
             d,
             address(new CashedInterestFacet()),
-            WiseSovrenNodesDiamondSelectors.cashedInterestSelectors()
+            WiseSovrenNodesDiamondSelectors._cashedInterestSelectors()
         );
 
         _wireOne(
             d,
             address(new BurnWiseFacet()),
-            WiseSovrenNodesDiamondSelectors.burnWiseSelectors()
+            WiseSovrenNodesDiamondSelectors._burnWiseSelectors()
         );
 
         _wireOne(
             d,
             address(new MoveFacet()),
-            WiseSovrenNodesDiamondSelectors.moveSelectors()
+            WiseSovrenNodesDiamondSelectors._moveSelectors()
         );
 
         _wireOne(
             d,
             address(new Permit2UserFacet()),
-            WiseSovrenNodesDiamondSelectors.permit2Selectors()
+            WiseSovrenNodesDiamondSelectors._permit2Selectors()
         );
 
         _wireOne(
             d,
             address(new MulticallFacet()),
-            WiseSovrenNodesDiamondSelectors.multicallSelectors()
+            WiseSovrenNodesDiamondSelectors._multicallSelectors()
         );
 
         _wireOne(
             d,
             address(new InterestAdminFacet()),
-            WiseSovrenNodesDiamondSelectors.interestAdminSelectors()
+            WiseSovrenNodesDiamondSelectors._interestAdminSelectors()
         );
 
         _wireOne(
             d,
             address(new RescueFacet()),
-            WiseSovrenNodesDiamondSelectors.rescueSelectors()
+            WiseSovrenNodesDiamondSelectors._rescueSelectors()
         );
     }
 
@@ -237,31 +239,31 @@ abstract contract DiamondTestHarness is Test {
         _wireOne(
             d,
             address(new QueueAdminFacet()),
-            WiseSovrenNodesDiamondSelectors.queueAdminSelectors()
+            WiseSovrenNodesDiamondSelectors._queueAdminSelectors()
         );
 
         _wireOne(
             d,
             address(new QueueJoinLeaveFacet()),
-            WiseSovrenNodesDiamondSelectors.queueJoinLeaveSelectors()
+            WiseSovrenNodesDiamondSelectors._queueJoinLeaveSelectors()
         );
 
         _wireOne(
             d,
             address(new QueueFulfillFacet()),
-            WiseSovrenNodesDiamondSelectors.queueFulfillSelectors()
+            WiseSovrenNodesDiamondSelectors._queueFulfillSelectors()
         );
 
         _wireOne(
             d,
             address(new QueueViewFacet()),
-            WiseSovrenNodesDiamondSelectors.queueViewSelectors()
+            WiseSovrenNodesDiamondSelectors._queueViewSelectors()
         );
 
         _wireOne(
             d,
             address(new QueueForecastFacet()),
-            WiseSovrenNodesDiamondSelectors.queueForecastSelectors()
+            WiseSovrenNodesDiamondSelectors._queueForecastSelectors()
         );
 
         _openPremiumLanes(
@@ -306,13 +308,59 @@ abstract contract DiamondTestHarness is Test {
     }
 
     /**
+     * @dev Deploys a fresh {ReferralRegistry} (the test contract
+     * becomes its master), allowlists the diamond as a writer and
+     * wires the slot-77 pointer through the {AdminFacet} trio. Must
+     * run after `_wireAllFacets` (the trio needs routing) and before
+     * `finalizeSetup()` so the pointer timelock is in its instant
+     * pre-initialization window, the same seam the hook install
+     * uses. Multi-diamond suites use `_wireReferralRegistryShared`
+     * directly so all vaults on the simulated chain consult ONE
+     * registry, the production topology.
+     */
+    function _wireReferralRegistry(
+        WiseSovrenNodesDiamond d
+    )
+        internal
+        returns (ReferralRegistry registry)
+    {
+        registry = new ReferralRegistry(
+            address(this),
+            0
+        );
+
+        _wireReferralRegistryShared(
+            d,
+            registry
+        );
+    }
+
+    function _wireReferralRegistryShared(
+        WiseSovrenNodesDiamond d,
+        ReferralRegistry _registry
+    )
+        internal
+    {
+        _registry.setAllowedVault(
+            address(d),
+            true
+        );
+
+        AdminFacet(address(d)).proposeReferralRegistry(
+            address(_registry)
+        );
+
+        AdminFacet(address(d)).executeReferralRegistryChange();
+    }
+
+    /**
      * @dev {Permit2UserFacet}'s constructor reverts if no
      * contract is present at the canonical Permit2 address. Tests
      * that don't need real Permit2 behaviour still trigger the
-     * check because the harness deploys all 7 facets; etch a
+     * check because the harness deploys the full facet set; etch a
      * minimal STOP at the canonical slot so the check passes. Tests
      * needing a real-ish Permit2 (the Permit2 facet test) etch a
-     * full mock BEFORE calling `_deployDiamond` - that prior etch
+     * full mock BEFORE calling `_deployDiamond`; that prior etch
      * is preserved here.
      */
     function _ensurePermit2()

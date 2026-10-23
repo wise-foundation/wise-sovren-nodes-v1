@@ -23,6 +23,20 @@ import {FacetBase} from "./FacetBase.sol";
  * `ccipReceive` deliberately omits `whenNotPaused`: pausing halts new
  * deposits, but shares already burned on a source chain must always
  * be mintable here so cross-chain funds are never stranded.
+ *
+ * Referral attribution: while the cohort recorder is armed, bridging
+ * is a system relocation — the source builds the `referralData`
+ * payload itself from its own storage (the aggregate carry of the
+ * burned slice plus the referrer's origin sync key) and IGNORES the
+ * caller's bytes on `bridgeToVaultWithReferral`; the destination
+ * applies the carry atomically inside `ccipReceive`, revert-free,
+ * with every failure degrading to an anomaly event so the mint can
+ * never be blocked by attribution machinery. While unarmed the
+ * behavior is unchanged, except that caller-supplied bytes shaped
+ * exactly like a carry payload are rejected — an armed destination
+ * must never be able to receive a user-forged carry from a
+ * legitimate source. No signature changed; the whole feature ships
+ * as a facet replacement behind the existing routed selectors.
  */
 contract BridgeFacet is FacetBase, IAny2EVMMessageReceiver {
 

@@ -121,10 +121,10 @@ contract WiseSovrenNodesDiamondSmokeTest is Test {
             )
         );
 
-        bytes4[] memory adminSels = WiseSovrenNodesDiamondSelectors.adminSelectors();
-        bytes4[] memory proxySels = WiseSovrenNodesDiamondSelectors.proxySelectors();
-        bytes4[] memory userSels = WiseSovrenNodesDiamondSelectors.userSelectors();
-        bytes4[] memory sweepSels = WiseSovrenNodesDiamondSelectors.sweepSelectors();
+        bytes4[] memory adminSels = WiseSovrenNodesDiamondSelectors._adminSelectors();
+        bytes4[] memory proxySels = WiseSovrenNodesDiamondSelectors._proxySelectors();
+        bytes4[] memory userSels = WiseSovrenNodesDiamondSelectors._userSelectors();
+        bytes4[] memory sweepSels = WiseSovrenNodesDiamondSelectors._sweepSelectors();
 
         d.proposeSelectors(
             adminSels,

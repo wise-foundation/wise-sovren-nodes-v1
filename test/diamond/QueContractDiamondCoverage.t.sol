@@ -202,11 +202,11 @@ contract QueContractDiamondCoverageTest is Test {
             })
         );
 
-        bytes4[] memory adminS = WiseSovrenNodesDiamondSelectors.adminSelectors();
+        bytes4[] memory adminS = WiseSovrenNodesDiamondSelectors._adminSelectors();
 
-        bytes4[] memory proxyS = WiseSovrenNodesDiamondSelectors.proxySelectors();
+        bytes4[] memory proxyS = WiseSovrenNodesDiamondSelectors._proxySelectors();
 
-        bytes4[] memory userS = WiseSovrenNodesDiamondSelectors.userSelectors();
+        bytes4[] memory userS = WiseSovrenNodesDiamondSelectors._userSelectors();
 
         v.proposeSelectors(
             adminS,
@@ -224,22 +224,22 @@ contract QueContractDiamondCoverageTest is Test {
         );
 
         v.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.queueAdminSelectors(),
+            WiseSovrenNodesDiamondSelectors._queueAdminSelectors(),
             address(adminFacet)
         );
 
         v.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.queueJoinLeaveSelectors(),
+            WiseSovrenNodesDiamondSelectors._queueJoinLeaveSelectors(),
             address(joinLeaveFacet)
         );
 
         v.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.queueFulfillSelectors(),
+            WiseSovrenNodesDiamondSelectors._queueFulfillSelectors(),
             address(fulfillFacet)
         );
 
         v.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.queueViewSelectors(),
+            WiseSovrenNodesDiamondSelectors._queueViewSelectors(),
             address(viewFacet)
         );
 
@@ -256,19 +256,19 @@ contract QueContractDiamondCoverageTest is Test {
         );
 
         v.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.queueAdminSelectors()
+            WiseSovrenNodesDiamondSelectors._queueAdminSelectors()
         );
 
         v.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.queueJoinLeaveSelectors()
+            WiseSovrenNodesDiamondSelectors._queueJoinLeaveSelectors()
         );
 
         v.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.queueFulfillSelectors()
+            WiseSovrenNodesDiamondSelectors._queueFulfillSelectors()
         );
 
         v.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.queueViewSelectors()
+            WiseSovrenNodesDiamondSelectors._queueViewSelectors()
         );
 
         QueueAdminFacet(address(v)).setIncentivesAllowed(

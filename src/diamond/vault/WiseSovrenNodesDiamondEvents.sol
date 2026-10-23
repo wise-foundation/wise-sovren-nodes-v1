@@ -311,6 +311,221 @@ abstract contract WiseSovrenNodesDiamondEvents {
         uint256 gasLimit
     );
 
+    // ---- Referral registry ----
+
+    event ReferralRegistrySet(
+        address referralRegistry
+    );
+
+    event ReferralRegistryProposed(
+        address indexed proposedReferralRegistry,
+        uint256 executableAt
+    );
+
+    event ReferralRegistryProposalCancelled(
+        address indexed cancelledReferralRegistry
+    );
+
+    // ---- Cohort recorder ----
+
+    event CohortContributionCredited(
+        address indexed user,
+        address indexed referrer,
+        uint256 amount
+    );
+
+    event CohortContributionSeeded(
+        address indexed user,
+        uint256 amount
+    );
+
+    event CohortContributionSynced(
+        address indexed user,
+        address indexed referrer,
+        uint256 oldContribution,
+        uint256 newContribution
+    );
+
+    event CohortAttributionCharged(
+        address indexed user,
+        address indexed referrer,
+        uint256 charged,
+        uint256 uncharged
+    );
+
+    event CohortDivestParked(
+        address indexed user
+    );
+
+    event CohortDivestDrained(
+        address indexed user
+    );
+
+    event CohortDivestParkSkipped(
+        address indexed user,
+        address indexed parked
+    );
+
+    event CohortBookSettled(
+        address indexed referrer,
+        uint256 fromTimestamp,
+        uint256 toTimestamp,
+        uint256 boundariesWalked
+    );
+
+    event CohortBookReduced(
+        address indexed referrer,
+        uint256 amount,
+        uint256 fromYear1,
+        uint256 fromYear2,
+        uint256 fromMature
+    );
+
+    event CohortGapRecorded(
+        address indexed referrer,
+        uint256 fromWeek,
+        uint256 toWeekExclusive,
+        uint256 maturePrincipal
+    );
+
+    event CohortLaneSaturated(
+        address indexed referrer,
+        uint256 laneKind,
+        uint256 index,
+        uint256 clippedAmount
+    );
+
+    event CohortReferrerLookupFailed(
+        address indexed user
+    );
+
+    event CohortSyncEnabledSet(
+        bool enabled
+    );
+
+    event CohortCarryStaged(
+        address indexed user,
+        address indexed dstVault,
+        address indexed referrer,
+        uint256 trackedDelta,
+        uint256 year1,
+        uint256 year2,
+        uint256 mature,
+        uint256 pairCount
+    );
+
+    event CohortCarryApplied(
+        address indexed user,
+        address indexed srcVault,
+        address indexed referrer,
+        address carriedReferrer,
+        uint256 trackedDelta,
+        uint256 year1,
+        uint256 year2,
+        uint256 mature,
+        uint256 pairCount
+    );
+
+    event CohortCarrySkipped(
+        address indexed user,
+        address indexed dstVault
+    );
+
+    event CohortCarryDiscarded(
+        address indexed user,
+        address indexed srcVault,
+        uint256 stagedAt
+    );
+
+    event CohortCarryBookDropped(
+        address indexed user,
+        address indexed srcVault,
+        address carriedReferrer,
+        uint256 trackedDelta,
+        uint256 mature,
+        uint256 pairCount
+    );
+
+    event CohortReferrerFlipApplied(
+        address indexed user,
+        address indexed oldReferrer,
+        address indexed newReferrer,
+        uint256 year1,
+        uint256 year2,
+        uint256 mature,
+        uint256 pairCount
+    );
+
+    event CohortBridgeCarrySent(
+        address indexed user,
+        uint64 indexed dstChainSelector,
+        address indexed referrer,
+        uint256 trackedDelta,
+        uint256 year1,
+        uint256 year2,
+        uint256 mature,
+        address bookReferrer
+    );
+
+    event CohortBridgeCarryApplied(
+        address indexed user,
+        uint64 indexed srcChainSelector,
+        address indexed effectiveReferrer,
+        address carriedReferrer,
+        uint256 trackedDelta,
+        uint256 year1,
+        uint256 year2,
+        uint256 mature
+    );
+
+    event CohortBridgeCarryDiscarded(
+        address indexed user,
+        uint64 indexed srcChainSelector
+    );
+
+    event CohortBridgeCarryBookDropped(
+        address indexed user,
+        uint64 indexed srcChainSelector,
+        address carriedReferrer,
+        uint256 year1,
+        uint256 year2,
+        uint256 mature
+    );
+
+    event CohortBridgeCarrySkipped(
+        address indexed user,
+        uint64 indexed dstChainSelector
+    );
+
+    event CohortBridgeHookFailed(
+        address indexed user,
+        uint64 indexed srcChainSelector
+    );
+
+    event CohortSelfCrumbSettled(
+        address indexed user,
+        uint256 settledAt,
+        uint256 currentWeekSeconds,
+        uint256 previousWeekSeconds
+    );
+
+    event CohortDisarmSpanSet(
+        uint256 disarmedAt,
+        uint256 rearmedAt
+    );
+
+    event CohortQuarantineReadFailed(
+        address indexed user,
+        uint64 indexed srcChainSelector
+    );
+
+    event CohortSelfLogged(
+        address indexed user,
+        uint256 fromWeek,
+        uint256 completedSeconds,
+        uint256 stake
+    );
+
     // ---- Queue surface ----
 
     event JoinQue(
@@ -427,5 +642,55 @@ abstract contract WiseSovrenNodesDiamondEvents {
 
     event AutoCompoundFeeBpsSet(
         uint256 autoCompoundFeeBps
+    );
+
+    // ---- Cohort flush ----
+
+    event FlushHubSet(
+        address flushHub,
+        uint64 flushHubChainSelector
+    );
+
+    event FlushHubProposed(
+        address indexed proposedFlushHub,
+        uint64 proposedFlushHubChainSelector,
+        uint256 executableAt
+    );
+
+    event FlushHubProposalCancelled(
+        address indexed cancelledFlushHub
+    );
+
+    event FlushBotAllowedSet(
+        address indexed bot,
+        bool allowed
+    );
+
+    event PublicFlushEnabledSet(
+        bool enabled
+    );
+
+    event FlushGasLimitSet(
+        uint64 flushGasLimit
+    );
+
+    event CohortFlushSent(
+        bytes32 indexed messageId,
+        uint64 indexed destChainSelector,
+        address indexed deliverer,
+        uint256 entryCount
+    );
+
+    event CohortFlushDelivered(
+        address indexed flushHub,
+        address indexed deliverer,
+        uint256 entryCount
+    );
+
+    event CohortReferrerFlushed(
+        address indexed referrer,
+        uint256 flushedThroughWeek,
+        uint256 flushedGapIndex,
+        uint256 gapResumeWeek
     );
 }
