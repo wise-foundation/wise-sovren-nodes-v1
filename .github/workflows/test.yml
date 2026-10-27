@@ -31,11 +31,17 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
+      # Pinned to the toolchain the repo is developed against: the gas budget
+      # suites measure with gasleft() and their ceilings are calibrated to
+      # 1.7.1's metering; forge 1.8 and later meter call frame warmth differently
+      # and trip those ceilings. Re-baseline every gas cell when bumping this pin.
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: v1.7.1
 
-      # The solc release list compiled into forge 1.7.1 (the current stable,
-      # built 2026-05-08) predates solc 0.8.36, so on a clean runner the pinned
+      # The solc release list compiled into forge 1.7.1 (built 2026-05-08)
+      # predates solc 0.8.36, so on a clean runner the pinned
       # `solc_version = "0.8.36"` cannot be resolved and the build aborts before
       # any download is attempted. Seeding the binary into the svm cache makes it
       # resolve as an already-installed version. Remove once a foundry stable
