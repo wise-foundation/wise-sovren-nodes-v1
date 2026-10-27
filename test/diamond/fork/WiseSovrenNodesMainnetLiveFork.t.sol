@@ -12,7 +12,9 @@ import {UserFacet} from "../../../src/diamond/vault/facets/UserFacet.sol";
 import {InterestAdminFacet} from "../../../src/diamond/vault/facets/InterestAdminFacet.sol";
 import {QueueJoinLeaveFacet} from "../../../src/diamond/vault/facets/QueueJoinLeaveFacet.sol";
 import {QueueFulfillFacet} from "../../../src/diamond/vault/facets/QueueFulfillFacet.sol";
+import {QueueAdminFacet} from "../../../src/diamond/vault/facets/QueueAdminFacet.sol";
 import {WiseSovrenNodesQueueUIHelper} from "../../../src/diamond/vault/helpers/WiseSovrenNodesQueueUIHelper.sol";
+import {WiseSovrenNodesQueueStructs} from "../../../src/diamond/vault/WiseSovrenNodesQueueStructs.sol";
 
 /**
  * @dev Live-state rehearsal against the REAL mainnet deployment at the
@@ -32,18 +34,28 @@ import {WiseSovrenNodesQueueUIHelper} from "../../../src/diamond/vault/helpers/W
  * standing in for operator treasury funding, and interest amounts are
  * asserted as bounds so the suite does not encode a second copy of the
  * accrual formula.
+ *
+ * The live book is never assumed empty: `setUp` reads every open order
+ * on the fork and leaves it as its owner, so the quote and switch cases
+ * below price their own orders at the head of an empty book whatever
+ * the real queue holds on the day the suite runs. The master is read from
+ * the chain rather than pinned, so the suite follows a master handoff, and
+ * `_activate` normalizes the knobs the numbers below depend on, on the
+ * fork only: deposits unpaused and open, the interest rate at 4,000 bps,
+ * cap headroom for the test deposits, and the two lanes the queue cases
+ * use (500 bps and the first premium rung) allowed.
  */
 contract WiseSovrenNodesMainnetLiveForkTest is Test {
 
     address internal constant DIAMOND = 0x50bae2675A6D7D9CADf9e2Ec96c7e45897Be8603;
-
-    address internal constant MASTER = 0xAE2c0c6eAD34b8E9156b146BE8B724CDb80Ba7e1;
 
     address internal constant USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
 
     uint256 internal constant YEAR = 365 days;
 
     WiseSovrenNodesDiamond internal diamond;
+
+    address internal master;
 
     address internal alice;
     address internal bob;
@@ -67,10 +79,36 @@ contract WiseSovrenNodesMainnetLiveForkTest is Test {
             "bob"
         );
 
+        master = diamond.master();
+
+        assertTrue(
+            master != address(0),
+            "attached to the live diamond and read its master"
+        );
+
+        _clearLiveBook();
+    }
+
+    function _clearLiveBook()
+        internal
+    {
+        WiseSovrenNodesQueueStructs.QueMemberWithId[] memory orders = WiseSovrenNodesQueueUIHelper(DIAMOND).getAllOrdersOverallWithId();
+
+        for (uint256 i; i < orders.length; ++i) {
+            vm.prank(
+                orders[i].member
+            );
+
+            QueueJoinLeaveFacet(DIAMOND).leaveQue(
+                orders[i].memberId,
+                orders[i].incentive
+            );
+        }
+
         assertEq(
-            diamond.master(),
-            MASTER,
-            "attached to the live diamond with the expected master"
+            WiseSovrenNodesQueueUIHelper(DIAMOND).getAllOrdersOverallWithId().length,
+            0,
+            "the live book is empty before the lifecycle runs"
         );
     }
 
@@ -556,7 +594,7 @@ contract WiseSovrenNodesMainnetLiveForkTest is Test {
         uint256 bobClaim = IERC20(USDC).balanceOf(bob) - bobUsdBefore;
 
         vm.prank(
-            MASTER
+            master
         );
 
         AdminFacet(DIAMOND).setInterestRate(
@@ -612,7 +650,7 @@ contract WiseSovrenNodesMainnetLiveForkTest is Test {
         holders[0] = alice;
 
         vm.prank(
-            MASTER
+            master
         );
 
         InterestAdminFacet(DIAMOND).syncInterestBulk(
@@ -620,7 +658,7 @@ contract WiseSovrenNodesMainnetLiveForkTest is Test {
         );
 
         vm.prank(
-            MASTER
+            master
         );
 
         AdminFacet(DIAMOND).setInterestRate(
@@ -839,11 +877,15 @@ contract WiseSovrenNodesMainnetLiveForkTest is Test {
         internal
     {
         vm.startPrank(
-            MASTER
+            master
         );
 
         if (diamond.initialized() == false) {
             diamond.finalizeSetup();
+        }
+
+        if (diamond.paused()) {
+            AdminFacet(DIAMOND).unpauseDeposits();
         }
 
         if (diamond.depositsDisabled()) {
@@ -851,6 +893,27 @@ contract WiseSovrenNodesMainnetLiveForkTest is Test {
                 false
             );
         }
+
+        if (diamond.interestRate() != 4_000) {
+            AdminFacet(DIAMOND).setInterestRate(
+                4_000
+            );
+        }
+
+        if (diamond.totalDepositCap() < diamond.totalSupply() + 1_000_000 * 1e6) {
+            AdminFacet(DIAMOND).setTotalDepositCap(
+                diamond.totalSupply() + 1_000_000 * 1e6
+            );
+        }
+
+        int256[] memory lanes = new int256[](2);
+        lanes[0] = 500;
+        lanes[1] = -2_000;
+
+        QueueAdminFacet(DIAMOND).setIncentivesAllowed(
+            lanes,
+            true
+        );
 
         vm.stopPrank();
 
