@@ -8,6 +8,10 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {WiseSovrenNodesDiamond} from "../../src/diamond/vault/WiseSovrenNodesDiamond.sol";
 import {WiseSovrenNodesInitParams} from "../../src/diamond/vault/WiseSovrenNodesDiamondStructs.sol";
 import {AdminFacet} from "../../src/diamond/vault/facets/AdminFacet.sol";
+import {CohortHookFacet} from "../../src/diamond/vault/facets/pending/CohortHookFacet.sol";
+import {CohortMoveHookFacet} from "../../src/diamond/vault/facets/pending/CohortMoveHookFacet.sol";
+
+import {WiseSovrenNodesDiamondSelectors} from "../../script/diamond/WiseSovrenNodesDiamondSelectors.sol";
 
 import {
     FacetNotFound,
@@ -53,9 +57,17 @@ contract DiamondSelectorRoutingTest is Test {
 
     uint256 constant DELAY = 3 days;
 
-    bytes4 constant SEL_ALLOW = bytes4(keccak256("disAllowSupplyChangeByOwner()"));
-    bytes4 constant SEL_DISALLOW = bytes4(keccak256("disallowWithdraw()"));
-    bytes4 constant SEL_PAUSE = bytes4(keccak256("pauseDeposits()"));
+    bytes4 constant SEL_ALLOW = bytes4(keccak256(
+        "disAllowSupplyChangeByOwner()"
+    ));
+
+    bytes4 constant SEL_DISALLOW = bytes4(keccak256(
+        "disallowWithdraw()"
+    ));
+
+    bytes4 constant SEL_PAUSE = bytes4(keccak256(
+        "pauseDeposits()"
+    ));
 
     event SetupFinalized();
 
@@ -190,17 +202,23 @@ contract DiamondSelectorRoutingTest is Test {
         );
 
         assertEq(
-            diamond.proposedSelectorFacet(SEL_ALLOW),
+            diamond.proposedSelectorFacet(
+                SEL_ALLOW
+            ),
             address(admin)
         );
 
         assertEq(
-            diamond.selectorChangeQueuedAt(SEL_ALLOW),
+            diamond.selectorChangeQueuedAt(
+                SEL_ALLOW
+            ),
             block.timestamp
         );
 
         assertEq(
-            diamond.selectorToFacet(SEL_ALLOW),
+            diamond.selectorToFacet(
+                SEL_ALLOW
+            ),
             address(0)
         );
     }
@@ -249,12 +267,16 @@ contract DiamondSelectorRoutingTest is Test {
         );
 
         assertEq(
-            diamond.proposedSelectorFacet(SEL_ALLOW),
+            diamond.proposedSelectorFacet(
+                SEL_ALLOW
+            ),
             address(v2)
         );
 
         assertEq(
-            diamond.selectorChangeQueuedAt(SEL_ALLOW),
+            diamond.selectorChangeQueuedAt(
+                SEL_ALLOW
+            ),
             t1 + 100
         );
     }
@@ -290,12 +312,16 @@ contract DiamondSelectorRoutingTest is Test {
 
         for (uint256 i = 0; i < sels.length; ++i) {
             assertEq(
-                diamond.proposedSelectorFacet(sels[i]),
+                diamond.proposedSelectorFacet(
+                    sels[i]
+                ),
                 address(admin)
             );
 
             assertEq(
-                diamond.selectorChangeQueuedAt(sels[i]),
+                diamond.selectorChangeQueuedAt(
+                    sels[i]
+                ),
                 block.timestamp
             );
         }
@@ -351,17 +377,23 @@ contract DiamondSelectorRoutingTest is Test {
         );
 
         assertEq(
-            diamond.selectorToFacet(SEL_ALLOW),
+            diamond.selectorToFacet(
+                SEL_ALLOW
+            ),
             address(admin)
         );
 
         assertEq(
-            diamond.proposedSelectorFacet(SEL_ALLOW),
+            diamond.proposedSelectorFacet(
+                SEL_ALLOW
+            ),
             address(0)
         );
 
         assertEq(
-            diamond.selectorChangeQueuedAt(SEL_ALLOW),
+            diamond.selectorChangeQueuedAt(
+                SEL_ALLOW
+            ),
             0
         );
     }
@@ -412,7 +444,9 @@ contract DiamondSelectorRoutingTest is Test {
         );
 
         assertEq(
-            diamond.selectorToFacet(SEL_ALLOW),
+            diamond.selectorToFacet(
+                SEL_ALLOW
+            ),
             address(admin)
         );
     }
@@ -438,7 +472,9 @@ contract DiamondSelectorRoutingTest is Test {
         );
 
         assertEq(
-            diamond.selectorToFacet(SEL_ALLOW),
+            diamond.selectorToFacet(
+                SEL_ALLOW
+            ),
             address(admin)
         );
     }
@@ -472,7 +508,9 @@ contract DiamondSelectorRoutingTest is Test {
         );
 
         assertEq(
-            diamond.selectorToFacet(SEL_ALLOW),
+            diamond.selectorToFacet(
+                SEL_ALLOW
+            ),
             address(admin)
         );
     }
@@ -555,17 +593,23 @@ contract DiamondSelectorRoutingTest is Test {
 
         for (uint256 i = 0; i < sels.length; ++i) {
             assertEq(
-                diamond.selectorToFacet(sels[i]),
+                diamond.selectorToFacet(
+                    sels[i]
+                ),
                 address(admin)
             );
 
             assertEq(
-                diamond.proposedSelectorFacet(sels[i]),
+                diamond.proposedSelectorFacet(
+                    sels[i]
+                ),
                 address(0)
             );
 
             assertEq(
-                diamond.selectorChangeQueuedAt(sels[i]),
+                diamond.selectorChangeQueuedAt(
+                    sels[i]
+                ),
                 0
             );
         }
@@ -600,22 +644,30 @@ contract DiamondSelectorRoutingTest is Test {
         );
 
         assertEq(
-            diamond.selectorToFacet(SEL_ALLOW),
+            diamond.selectorToFacet(
+                SEL_ALLOW
+            ),
             address(0)
         );
 
         assertEq(
-            diamond.selectorToFacet(SEL_DISALLOW),
+            diamond.selectorToFacet(
+                SEL_DISALLOW
+            ),
             address(0)
         );
 
         assertEq(
-            diamond.proposedSelectorFacet(SEL_ALLOW),
+            diamond.proposedSelectorFacet(
+                SEL_ALLOW
+            ),
             address(admin)
         );
 
         assertEq(
-            diamond.proposedSelectorFacet(SEL_DISALLOW),
+            diamond.proposedSelectorFacet(
+                SEL_DISALLOW
+            ),
             address(admin)
         );
     }
@@ -648,12 +700,16 @@ contract DiamondSelectorRoutingTest is Test {
         );
 
         assertEq(
-            diamond.proposedSelectorFacet(SEL_ALLOW),
+            diamond.proposedSelectorFacet(
+                SEL_ALLOW
+            ),
             address(0)
         );
 
         assertEq(
-            diamond.selectorChangeQueuedAt(SEL_ALLOW),
+            diamond.selectorChangeQueuedAt(
+                SEL_ALLOW
+            ),
             0
         );
     }
@@ -728,7 +784,9 @@ contract DiamondSelectorRoutingTest is Test {
         );
 
         assertEq(
-            diamond.selectorToFacet(SEL_ALLOW),
+            diamond.selectorToFacet(
+                SEL_ALLOW
+            ),
             address(admin)
         );
     }
@@ -822,7 +880,9 @@ contract DiamondSelectorRoutingTest is Test {
         );
 
         assertEq(
-            diamond.selectorToFacet(SEL_ALLOW),
+            diamond.selectorToFacet(
+                SEL_ALLOW
+            ),
             address(admin)
         );
 
@@ -836,7 +896,9 @@ contract DiamondSelectorRoutingTest is Test {
         );
 
         assertEq(
-            diamond.selectorToFacet(SEL_ALLOW),
+            diamond.selectorToFacet(
+                SEL_ALLOW
+            ),
             address(0)
         );
 
@@ -876,7 +938,9 @@ contract DiamondSelectorRoutingTest is Test {
         diamond.finalizeSetup();
 
         assertEq(
-            diamond.selectorToFacet(SEL_ALLOW),
+            diamond.selectorToFacet(
+                SEL_ALLOW
+            ),
             address(v1)
         );
 
@@ -902,7 +966,9 @@ contract DiamondSelectorRoutingTest is Test {
         );
 
         assertEq(
-            diamond.selectorToFacet(SEL_ALLOW),
+            diamond.selectorToFacet(
+                SEL_ALLOW
+            ),
             address(v2)
         );
 
@@ -925,5 +991,57 @@ contract DiamondSelectorRoutingTest is Test {
         );
 
         admin.disAllowSupplyChangeByOwner();
+    }
+
+    // ---- routed move slice selectors ----
+
+    function test_cohortMoveHookSelectors_matchPointerFacetSelectors()
+        public
+        pure
+    {
+        bytes4[] memory moveSels = WiseSovrenNodesDiamondSelectors._cohortMoveHookSelectors();
+
+        assertEq(
+            moveSels.length,
+            2
+        );
+
+        assertEq(
+            moveSels[0],
+            CohortHookFacet.applyCohortMoveOut.selector
+        );
+
+        assertEq(
+            moveSels[1],
+            CohortHookFacet.applyCohortMoveIn.selector
+        );
+
+        assertEq(
+            CohortMoveHookFacet.applyCohortMoveOut.selector,
+            CohortHookFacet.applyCohortMoveOut.selector
+        );
+
+        assertEq(
+            CohortMoveHookFacet.applyCohortMoveIn.selector,
+            CohortHookFacet.applyCohortMoveIn.selector
+        );
+
+        bytes4[] memory bridgeSels = WiseSovrenNodesDiamondSelectors._cohortBridgeHookSelectors();
+
+        bytes4[] memory recorderSels = WiseSovrenNodesDiamondSelectors._cohortRecorderSelectors();
+
+        for (uint256 i = 0; i < moveSels.length; ++i) {
+            for (uint256 j = 0; j < bridgeSels.length; ++j) {
+                assertTrue(
+                    moveSels[i] != bridgeSels[j]
+                );
+            }
+
+            for (uint256 j = 0; j < recorderSels.length; ++j) {
+                assertTrue(
+                    moveSels[i] != recorderSels[j]
+                );
+            }
+        }
     }
 }

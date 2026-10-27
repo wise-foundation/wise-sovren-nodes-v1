@@ -140,11 +140,11 @@ contract WiseSovrenNodesBurnWiseForkTest is Test {
             _buildInitParams()
         );
 
-        bytes4[] memory adminSels = WiseSovrenNodesDiamondSelectors.adminSelectors();
-        bytes4[] memory proxySels = WiseSovrenNodesDiamondSelectors.proxySelectors();
-        bytes4[] memory userSels = WiseSovrenNodesDiamondSelectors.userSelectors();
-        bytes4[] memory sweepSels = WiseSovrenNodesDiamondSelectors.sweepSelectors();
-        bytes4[] memory burnSels = WiseSovrenNodesDiamondSelectors.burnWiseSelectors();
+        bytes4[] memory adminSels = WiseSovrenNodesDiamondSelectors._adminSelectors();
+        bytes4[] memory proxySels = WiseSovrenNodesDiamondSelectors._proxySelectors();
+        bytes4[] memory userSels = WiseSovrenNodesDiamondSelectors._userSelectors();
+        bytes4[] memory sweepSels = WiseSovrenNodesDiamondSelectors._sweepSelectors();
+        bytes4[] memory burnSels = WiseSovrenNodesDiamondSelectors._burnWiseSelectors();
 
         d.proposeSelectors(
             adminSels,

@@ -61,12 +61,21 @@ abstract contract WiseSovrenNodesHelper is WiseSovrenNodesCrossChainHelper {
     )
         internal
     {
+        _cohortSync(
+            msg.sender
+        );
+
         _mint(
             msg.sender,
             _amount
         );
 
         emit Deposited(
+            msg.sender,
+            _amount
+        );
+
+        _cohortCredit(
             msg.sender,
             _amount
         );

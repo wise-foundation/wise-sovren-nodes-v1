@@ -141,7 +141,7 @@ contract WiseSovrenNodesDepositGateTest is DiamondTestHarness {
         _wireOne(
             diamond,
             address(new BridgeFacet()),
-            WiseSovrenNodesDiamondSelectors.bridgeSelectors()
+            WiseSovrenNodesDiamondSelectors._bridgeSelectors()
         );
 
         BridgeFacet(address(diamond)).setCcipRouter(

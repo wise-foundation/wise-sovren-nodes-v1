@@ -118,37 +118,37 @@ contract QueContractDiamondSmokeTest is Test {
         );
 
         _proposeAndExecute(
-            WiseSovrenNodesDiamondSelectors.adminSelectors(),
+            WiseSovrenNodesDiamondSelectors._adminSelectors(),
             address(new AdminFacet())
         );
 
         _proposeAndExecute(
-            WiseSovrenNodesDiamondSelectors.proxySelectors(),
+            WiseSovrenNodesDiamondSelectors._proxySelectors(),
             address(new ProxyFacet())
         );
 
         _proposeAndExecute(
-            WiseSovrenNodesDiamondSelectors.userSelectors(),
+            WiseSovrenNodesDiamondSelectors._userSelectors(),
             address(new UserFacet())
         );
 
         _proposeAndExecute(
-            WiseSovrenNodesDiamondSelectors.queueAdminSelectors(),
+            WiseSovrenNodesDiamondSelectors._queueAdminSelectors(),
             address(new QueueAdminFacet())
         );
 
         _proposeAndExecute(
-            WiseSovrenNodesDiamondSelectors.queueJoinLeaveSelectors(),
+            WiseSovrenNodesDiamondSelectors._queueJoinLeaveSelectors(),
             address(new QueueJoinLeaveFacet())
         );
 
         _proposeAndExecute(
-            WiseSovrenNodesDiamondSelectors.queueFulfillSelectors(),
+            WiseSovrenNodesDiamondSelectors._queueFulfillSelectors(),
             address(new QueueFulfillFacet())
         );
 
         _proposeAndExecute(
-            WiseSovrenNodesDiamondSelectors.queueViewSelectors(),
+            WiseSovrenNodesDiamondSelectors._queueViewSelectors(),
             address(new QueueViewFacet())
         );
 

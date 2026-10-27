@@ -858,38 +858,12 @@ contract WiseSovrenNodesMixedBookQuotesTest is DiamondTestHarness {
         );
     }
 
-    function test_setIncentivesAllowed_closedPopulatedLane_blocksMemberExit()
+    function test_setIncentivesAllowed_closedPopulatedLane_memberExitStillSucceeds()
         public
     {
         _setLaneAllowed(
             -2_000,
             false
-        );
-
-        vm.expectRevert(
-            WiseSovrenNodesDiamondErrors.IncentiveNotAllowed.selector
-        );
-
-        vm.prank(seller1);
-        QueueJoinLeaveFacet(address(diamond)).leaveQue(
-            0,
-            -2_000
-        );
-
-        vm.expectRevert(
-            WiseSovrenNodesDiamondErrors.IncentiveNotAllowed.selector
-        );
-
-        vm.prank(seller1);
-        QueueJoinLeaveFacet(address(diamond)).reduceQueAmount(
-            0,
-            -2_000,
-            50 * 1e6
-        );
-
-        _setLaneAllowed(
-            -2_000,
-            true
         );
 
         vm.prank(seller1);

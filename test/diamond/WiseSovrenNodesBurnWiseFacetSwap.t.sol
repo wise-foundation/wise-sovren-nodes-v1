@@ -214,8 +214,8 @@ contract WiseSovrenNodesBurnWiseFacetSwapTest is Test {
             _buildInitParams()
         );
 
-        bytes4[] memory adminSels = WiseSovrenNodesDiamondSelectors.adminSelectors();
-        bytes4[] memory burnSels = WiseSovrenNodesDiamondSelectors.burnWiseSelectors();
+        bytes4[] memory adminSels = WiseSovrenNodesDiamondSelectors._adminSelectors();
+        bytes4[] memory burnSels = WiseSovrenNodesDiamondSelectors._burnWiseSelectors();
 
         d.proposeSelectors(
             adminSels,
@@ -245,7 +245,7 @@ contract WiseSovrenNodesBurnWiseFacetSwapTest is Test {
     function _swapToAltFacet()
         internal
     {
-        bytes4[] memory burnSels = WiseSovrenNodesDiamondSelectors.burnWiseSelectors();
+        bytes4[] memory burnSels = WiseSovrenNodesDiamondSelectors._burnWiseSelectors();
 
         diamond.proposeSelectors(
             burnSels,
@@ -310,7 +310,7 @@ contract WiseSovrenNodesBurnWiseFacetSwapTest is Test {
     function test_facetSwap_requiresTimelock()
         public
     {
-        bytes4[] memory burnSels = WiseSovrenNodesDiamondSelectors.burnWiseSelectors();
+        bytes4[] memory burnSels = WiseSovrenNodesDiamondSelectors._burnWiseSelectors();
 
         diamond.proposeSelectors(
             burnSels,

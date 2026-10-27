@@ -395,7 +395,7 @@ contract WiseSovrenNodesAdminCoverageTest is DiamondTestHarness {
         _wireOne(
             d,
             address(new CashedInterestFacet()),
-            WiseSovrenNodesDiamondSelectors.cashedInterestSelectors()
+            WiseSovrenNodesDiamondSelectors._cashedInterestSelectors()
         );
 
         assertEq(
@@ -442,7 +442,7 @@ contract WiseSovrenNodesAdminCoverageTest is DiamondTestHarness {
         _wireOne(
             d,
             address(new CashedInterestFacet()),
-            WiseSovrenNodesDiamondSelectors.cashedInterestSelectors()
+            WiseSovrenNodesDiamondSelectors._cashedInterestSelectors()
         );
 
         assertEq(
@@ -469,7 +469,7 @@ contract WiseSovrenNodesAdminCoverageTest is DiamondTestHarness {
         _wireOne(
             d,
             address(new CashedInterestFacet()),
-            WiseSovrenNodesDiamondSelectors.cashedInterestSelectors()
+            WiseSovrenNodesDiamondSelectors._cashedInterestSelectors()
         );
 
         assertEq(

@@ -213,43 +213,43 @@ contract WiseSovrenNodesMoveFacetTest is Test {
         _wireOne(
             _d,
             address(new AdminFacet()),
-            WiseSovrenNodesDiamondSelectors.adminSelectors()
+            WiseSovrenNodesDiamondSelectors._adminSelectors()
         );
 
         _wireOne(
             _d,
             address(new ProxyFacet()),
-            WiseSovrenNodesDiamondSelectors.proxySelectors()
+            WiseSovrenNodesDiamondSelectors._proxySelectors()
         );
 
         _wireOne(
             _d,
             address(new UserFacet()),
-            WiseSovrenNodesDiamondSelectors.userSelectors()
+            WiseSovrenNodesDiamondSelectors._userSelectors()
         );
 
         _wireOne(
             _d,
             address(new SweepFacet()),
-            WiseSovrenNodesDiamondSelectors.sweepSelectors()
+            WiseSovrenNodesDiamondSelectors._sweepSelectors()
         );
 
         _wireOne(
             _d,
             address(new BurnWiseFacet()),
-            WiseSovrenNodesDiamondSelectors.burnWiseSelectors()
+            WiseSovrenNodesDiamondSelectors._burnWiseSelectors()
         );
 
         _wireOne(
             _d,
             address(new MoveFacet()),
-            WiseSovrenNodesDiamondSelectors.moveSelectors()
+            WiseSovrenNodesDiamondSelectors._moveSelectors()
         );
 
         _wireOne(
             _d,
             address(new Permit2UserFacet()),
-            WiseSovrenNodesDiamondSelectors.permit2Selectors()
+            WiseSovrenNodesDiamondSelectors._permit2Selectors()
         );
     }
 

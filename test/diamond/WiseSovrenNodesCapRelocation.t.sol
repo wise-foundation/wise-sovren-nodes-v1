@@ -284,7 +284,7 @@ contract WiseSovrenNodesCapRelocationTest is DiamondTestHarness {
         _wireOne(
             d,
             address(new BridgeFacet()),
-            WiseSovrenNodesDiamondSelectors.bridgeSelectors()
+            WiseSovrenNodesDiamondSelectors._bridgeSelectors()
         );
     }
 

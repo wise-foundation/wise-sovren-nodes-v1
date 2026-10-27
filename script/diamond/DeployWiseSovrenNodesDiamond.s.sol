@@ -489,156 +489,156 @@ contract DeployWiseSovrenNodesDiamond is Script {
         internal
     {
         diamond.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.adminSelectors(),
+            WiseSovrenNodesDiamondSelectors._adminSelectors(),
             address(facets.admin)
         );
 
         diamond.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.proxySelectors(),
+            WiseSovrenNodesDiamondSelectors._proxySelectors(),
             address(facets.proxy)
         );
 
         diamond.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.userSelectors(),
+            WiseSovrenNodesDiamondSelectors._userSelectors(),
             address(facets.user)
         );
 
         diamond.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.sweepSelectors(),
+            WiseSovrenNodesDiamondSelectors._sweepSelectors(),
             address(facets.sweep)
         );
 
         diamond.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.cashedInterestSelectors(),
+            WiseSovrenNodesDiamondSelectors._cashedInterestSelectors(),
             address(facets.cashedInterest)
         );
 
         diamond.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.burnWiseSelectors(),
+            WiseSovrenNodesDiamondSelectors._burnWiseSelectors(),
             address(facets.burnWise)
         );
 
         diamond.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.moveSelectors(),
+            WiseSovrenNodesDiamondSelectors._moveSelectors(),
             address(facets.move)
         );
 
         diamond.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.bridgeSelectors(),
+            WiseSovrenNodesDiamondSelectors._bridgeSelectors(),
             address(facets.bridge)
         );
 
         diamond.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.permit2Selectors(),
+            WiseSovrenNodesDiamondSelectors._permit2Selectors(),
             address(facets.permit2)
         );
 
         diamond.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.multicallSelectors(),
+            WiseSovrenNodesDiamondSelectors._multicallSelectors(),
             address(facets.multicall)
         );
 
         diamond.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.queueAdminSelectors(),
+            WiseSovrenNodesDiamondSelectors._queueAdminSelectors(),
             address(facets.queueAdmin)
         );
 
         diamond.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.queueJoinLeaveSelectors(),
+            WiseSovrenNodesDiamondSelectors._queueJoinLeaveSelectors(),
             address(facets.queueJoinLeave)
         );
 
         diamond.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.queueFulfillSelectors(),
+            WiseSovrenNodesDiamondSelectors._queueFulfillSelectors(),
             address(facets.queueFulfill)
         );
 
         diamond.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.queueViewSelectors(),
+            WiseSovrenNodesDiamondSelectors._queueViewSelectors(),
             address(facets.queueView)
         );
 
         diamond.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.queueForecastSelectors(),
+            WiseSovrenNodesDiamondSelectors._queueForecastSelectors(),
             address(facets.queueForecast)
         );
 
         diamond.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.interestAdminSelectors(),
+            WiseSovrenNodesDiamondSelectors._interestAdminSelectors(),
             address(facets.interestAdmin)
         );
 
         diamond.proposeSelectors(
-            WiseSovrenNodesDiamondSelectors.rescueSelectors(),
+            WiseSovrenNodesDiamondSelectors._rescueSelectors(),
             address(facets.rescue)
         );
 
         diamond.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.adminSelectors()
+            WiseSovrenNodesDiamondSelectors._adminSelectors()
         );
 
         diamond.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.proxySelectors()
+            WiseSovrenNodesDiamondSelectors._proxySelectors()
         );
 
         diamond.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.userSelectors()
+            WiseSovrenNodesDiamondSelectors._userSelectors()
         );
 
         diamond.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.sweepSelectors()
+            WiseSovrenNodesDiamondSelectors._sweepSelectors()
         );
 
         diamond.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.cashedInterestSelectors()
+            WiseSovrenNodesDiamondSelectors._cashedInterestSelectors()
         );
 
         diamond.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.burnWiseSelectors()
+            WiseSovrenNodesDiamondSelectors._burnWiseSelectors()
         );
 
         diamond.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.moveSelectors()
+            WiseSovrenNodesDiamondSelectors._moveSelectors()
         );
 
         diamond.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.bridgeSelectors()
+            WiseSovrenNodesDiamondSelectors._bridgeSelectors()
         );
 
         diamond.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.permit2Selectors()
+            WiseSovrenNodesDiamondSelectors._permit2Selectors()
         );
 
         diamond.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.multicallSelectors()
+            WiseSovrenNodesDiamondSelectors._multicallSelectors()
         );
 
         diamond.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.queueAdminSelectors()
+            WiseSovrenNodesDiamondSelectors._queueAdminSelectors()
         );
 
         diamond.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.queueJoinLeaveSelectors()
+            WiseSovrenNodesDiamondSelectors._queueJoinLeaveSelectors()
         );
 
         diamond.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.queueFulfillSelectors()
+            WiseSovrenNodesDiamondSelectors._queueFulfillSelectors()
         );
 
         diamond.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.queueViewSelectors()
+            WiseSovrenNodesDiamondSelectors._queueViewSelectors()
         );
 
         diamond.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.queueForecastSelectors()
+            WiseSovrenNodesDiamondSelectors._queueForecastSelectors()
         );
 
         diamond.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.interestAdminSelectors()
+            WiseSovrenNodesDiamondSelectors._interestAdminSelectors()
         );
 
         diamond.executeSelectorChanges(
-            WiseSovrenNodesDiamondSelectors.rescueSelectors()
+            WiseSovrenNodesDiamondSelectors._rescueSelectors()
         );
     }
 }

@@ -97,8 +97,8 @@ contract WiseSovrenNodesBurnWiseConfigurableTest is Test {
             _buildInitParams()
         );
 
-        bytes4[] memory adminSels = WiseSovrenNodesDiamondSelectors.adminSelectors();
-        bytes4[] memory burnSels = WiseSovrenNodesDiamondSelectors.burnWiseSelectors();
+        bytes4[] memory adminSels = WiseSovrenNodesDiamondSelectors._adminSelectors();
+        bytes4[] memory burnSels = WiseSovrenNodesDiamondSelectors._burnWiseSelectors();
 
         d.proposeSelectors(
             adminSels,

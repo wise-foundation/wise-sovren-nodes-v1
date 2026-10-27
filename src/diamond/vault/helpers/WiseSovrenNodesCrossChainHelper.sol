@@ -6,6 +6,7 @@ import {Client} from "@chainlink/contracts-ccip/contracts/libraries/Client.sol";
 import {IRouterClient} from "@chainlink/contracts-ccip/contracts/interfaces/IRouterClient.sol";
 
 import {WiseSovrenNodesMoveHelper} from "./WiseSovrenNodesMoveHelper.sol";
+import {CohortWeeks} from "../../shared/pending/CohortWeeks.sol";
 
 /**
  * @dev Cross-chain sibling of {WiseSovrenNodesMoveHelper}. Where
@@ -47,6 +48,23 @@ import {WiseSovrenNodesMoveHelper} from "./WiseSovrenNodesMoveHelper.sol";
  * so a compromised master cannot instantly point a lane at a malicious
  * vault that would mint unbacked shares. Disabling is instant via
  * `removeCrossChainPeer`.
+ *
+ * Referral attribution: an armed source replaces the post-burn
+ * sale-like clamp with the bridge-carry capture — the same clamp plus
+ * an aggregate relocation payload written into `referralData`
+ * (caller-supplied bytes are ignored while armed; while unarmed a
+ * caller payload that parses as a valid carry reverts
+ * `ReferralDataReserved`). An armed destination consumes the payload
+ * right after the mint through the tolerant `_cohortBridgeIn` stub —
+ * validation, registry merge and landing all degrade soft, and the
+ * legacy `BridgeReferral` surfacing fires only when the carry did NOT
+ * apply. Fee quoting sizes the message with a fixed-width carry dummy
+ * while armed, since the real payload is storage-derived at send
+ * time. The carry's per-component scaling shares
+ * `crossChainPeerDecimals` with the amount path through
+ * `_crossChainScaleFactors` (numerator/denominator form, floors per
+ * component so the destination can never be told more than the
+ * scaled burn).
  */
 abstract contract WiseSovrenNodesCrossChainHelper is WiseSovrenNodesMoveHelper {
 
@@ -261,10 +279,42 @@ abstract contract WiseSovrenNodesCrossChainHelper is WiseSovrenNodesMoveHelper {
             MoveAmountTooSmall()
         );
 
+        _cohortSync(
+            msg.sender
+        );
+
         _burn(
             msg.sender,
             _amount
         );
+
+        bytes memory referralPayload = _referralData;
+
+        if (cohortSyncEnabled == true) {
+
+            (
+                uint256 scaleNumerator,
+                uint256 scaleDenominator
+            ) = _crossChainScaleFactors(
+                _destChainSelector
+            );
+
+            referralPayload = _cohortBridgeOut(
+                msg.sender,
+                _destChainSelector,
+                _amount,
+                scaleNumerator,
+                scaleDenominator
+            );
+        } else {
+            require(
+                CohortWeeks._bridgeCarryValid(
+                    _referralData,
+                    type(uint256).max
+                ) == false,
+                ReferralDataReserved()
+            );
+        }
 
         _reduceDepositCap(
             _amount
@@ -274,7 +324,7 @@ abstract contract WiseSovrenNodesCrossChainHelper is WiseSovrenNodesMoveHelper {
             crossChainPeer[_destChainSelector],
             msg.sender,
             dstAmount,
-            _referralData
+            referralPayload
         );
 
         uint256 fee = IRouterClient(ccipRouter).getFee(
@@ -383,6 +433,10 @@ abstract contract WiseSovrenNodesCrossChainHelper is WiseSovrenNodesMoveHelper {
             amount
         );
 
+        _cohortSync(
+            user
+        );
+
         _mint(
             user,
             amount
@@ -395,7 +449,22 @@ abstract contract WiseSovrenNodesCrossChainHelper is WiseSovrenNodesMoveHelper {
             _message.messageId
         );
 
-        if (referralEnabled && referralData.length > 0) {
+        bool carryApplied;
+
+        if (referralData.length > 0) {
+            carryApplied = _cohortBridgeIn(
+                user,
+                srcChainSelector,
+                amount,
+                referralData
+            );
+        }
+
+        if (
+            carryApplied == false
+            && referralEnabled
+            && referralData.length > 0
+        ) {
             emit BridgeReferral(
                 user,
                 srcChainSelector,
@@ -421,16 +490,47 @@ abstract contract WiseSovrenNodesCrossChainHelper is WiseSovrenNodesMoveHelper {
             _amount
         );
 
+        bytes memory referralPayload = cohortSyncEnabled
+            ? new bytes(CohortWeeks.BRIDGE_CARRY_BYTES)
+            : _referralData;
+
         Client.EVM2AnyMessage memory message = _buildBridgeMessage(
             crossChainPeer[_destChainSelector],
             msg.sender,
             dstAmount,
-            _referralData
+            referralPayload
         );
 
         return IRouterClient(ccipRouter).getFee(
             _destChainSelector,
             message
+        );
+    }
+
+    function _crossChainScaleFactors(
+        uint64 _destChainSelector
+    )
+        internal
+        view
+        returns (
+            uint256 numerator,
+            uint256 denominator
+        )
+    {
+        uint8 srcDecimals = decimalsSet;
+
+        uint8 dstDecimals = crossChainPeerDecimals[_destChainSelector];
+
+        if (dstDecimals >= srcDecimals) {
+            return (
+                10 ** (dstDecimals - srcDecimals),
+                1
+            );
+        }
+
+        return (
+            1,
+            10 ** (srcDecimals - dstDecimals)
         );
     }
 

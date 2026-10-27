@@ -39,6 +39,18 @@ import {DepositAccumPrevDeclaration} from "./DepositAccumPrevDeclaration.sol";
 import {HookGuardDeclaration} from "./HookGuardDeclaration.sol";
 import {InterestRemainderDeclaration} from "./InterestRemainderDeclaration.sol";
 import {AutoCompoundDeclaration} from "./AutoCompoundDeclaration.sol";
+import {ReferralRegistryDeclaration} from "./pending/ReferralRegistryDeclaration.sol";
+import {CohortContributionDeclaration} from "./pending/CohortContributionDeclaration.sol";
+import {CohortBookDeclaration} from "./pending/CohortBookDeclaration.sol";
+import {ReferralPayoutDeclaration} from "./pending/ReferralPayoutDeclaration.sol";
+import {ReferralRegistryPointerDeclaration} from "./pending/ReferralRegistryPointerDeclaration.sol";
+import {PayoutHubPointerDeclaration} from "./pending/PayoutHubPointerDeclaration.sol";
+import {CohortFlushDeclaration} from "./pending/CohortFlushDeclaration.sol";
+import {CohortAttributionDeclaration} from "./pending/CohortAttributionDeclaration.sol";
+import {CohortDivestDeclaration} from "./pending/CohortDivestDeclaration.sol";
+import {CohortSelfDeclaration} from "./pending/CohortSelfDeclaration.sol";
+import {CohortDisarmDeclaration} from "./pending/CohortDisarmDeclaration.sol";
+import {CohortSelfLogDeclaration} from "./pending/CohortSelfLogDeclaration.sol";
 
 /**
  * @title WiseSovrenNodesDeclarations
@@ -106,7 +118,19 @@ abstract contract WiseSovrenNodesDeclarations is
     DepositAccumPrevDeclaration,
     HookGuardDeclaration,
     InterestRemainderDeclaration,
-    AutoCompoundDeclaration
+    AutoCompoundDeclaration,
+    ReferralRegistryDeclaration,
+    CohortContributionDeclaration,
+    CohortBookDeclaration,
+    ReferralPayoutDeclaration,
+    ReferralRegistryPointerDeclaration,
+    PayoutHubPointerDeclaration,
+    CohortFlushDeclaration,
+    CohortAttributionDeclaration,
+    CohortDivestDeclaration,
+    CohortSelfDeclaration,
+    CohortDisarmDeclaration,
+    CohortSelfLogDeclaration
 {
 
     constructor(

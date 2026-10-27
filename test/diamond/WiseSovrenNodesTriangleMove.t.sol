@@ -142,19 +142,19 @@ contract WiseSovrenNodesTriangleMoveTest is Test {
         _wireOne(
             d,
             address(new AdminFacet()),
-            WiseSovrenNodesDiamondSelectors.adminSelectors()
+            WiseSovrenNodesDiamondSelectors._adminSelectors()
         );
 
         _wireOne(
             d,
             address(new UserFacet()),
-            WiseSovrenNodesDiamondSelectors.userSelectors()
+            WiseSovrenNodesDiamondSelectors._userSelectors()
         );
 
         _wireOne(
             d,
             address(new MoveFacet()),
-            WiseSovrenNodesDiamondSelectors.moveSelectors()
+            WiseSovrenNodesDiamondSelectors._moveSelectors()
         );
 
         d.finalizeSetup();

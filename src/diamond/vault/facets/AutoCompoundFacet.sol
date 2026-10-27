@@ -14,7 +14,10 @@ import {FacetBase} from "./FacetBase.sol";
  * audited `compoundInterest` flow plus a fee split: identical
  * modifier order, bucket cleared and net minted before the two USD
  * transfers, and `fee + net` exactly offsets the cleared liability.
- * It stamps the user's grace lock on the minted net. Opting out is
+ * It stamps the user's grace lock on the minted net and, like
+ * `compoundInterest`, syncs the cohort recorder before the mint and
+ * credits the minted net after it (both no-ops until the recorder is
+ * armed). Opting out is
  * always callable. Inherits the full declaration chain because it
  * needs the OZ `_mint` and the remainder-carrying banking.
  */
@@ -90,7 +93,16 @@ contract AutoCompoundFacet is FacetBase {
             netAmount
         );
 
+        _cohortSync(
+            _user
+        );
+
         _mint(
+            _user,
+            netAmount
+        );
+
+        _cohortCredit(
             _user,
             netAmount
         );

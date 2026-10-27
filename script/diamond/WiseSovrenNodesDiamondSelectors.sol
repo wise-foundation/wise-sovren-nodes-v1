@@ -11,6 +11,13 @@ import {BurnWiseFacet} from "../../src/diamond/vault/facets/BurnWiseFacet.sol";
 import {MoveFacet} from "../../src/diamond/vault/facets/MoveFacet.sol";
 import {BridgeFacet} from "../../src/diamond/vault/facets/BridgeFacet.sol";
 import {Permit2UserFacet} from "../../src/diamond/vault/facets/Permit2UserFacet.sol";
+import {ReferralFacet} from "../../src/diamond/vault/facets/pending/ReferralFacet.sol";
+import {Permit2ReferralFacet} from "../../src/diamond/vault/facets/pending/Permit2ReferralFacet.sol";
+import {CohortRecorderFacet} from "../../src/diamond/vault/facets/pending/CohortRecorderFacet.sol";
+import {CohortBridgeHookFacet} from "../../src/diamond/vault/facets/pending/CohortBridgeHookFacet.sol";
+import {CohortMoveHookFacet} from "../../src/diamond/vault/facets/pending/CohortMoveHookFacet.sol";
+import {CohortFlushFacet} from "../../src/diamond/vault/facets/pending/CohortFlushFacet.sol";
+import {CohortFlushPolicyFacet} from "../../src/diamond/vault/facets/pending/CohortFlushPolicyFacet.sol";
 import {MulticallFacet} from "../../src/diamond/vault/facets/MulticallFacet.sol";
 import {QueueAdminFacet} from "../../src/diamond/vault/facets/QueueAdminFacet.sol";
 import {QueueJoinLeaveFacet} from "../../src/diamond/vault/facets/QueueJoinLeaveFacet.sol";
@@ -55,22 +62,77 @@ interface IAutoCompoundGetters {
  * Deploy scripts and tests both import this library so the wiring
  * cannot drift.
  *
- * Counts: admin=27, proxy=3, user=8, sweep=2, cashedInterest=1,
+ * Counts: admin=40, proxy=3, user=8, sweep=2, cashedInterest=1,
  * queueForecast=1, interestAdmin=3, rescue=1, burnWise=3, move=7,
- * bridge=14, permit2=3, multicall=1, queueAdmin=3, queueJoinLeave=5,
- * queueFulfill=4, queueView=10 — 96 wired at genesis;
- * autoCompound=7 (4 functions + the 3 shard getters, which the
- * frozen live dispatcher cannot serve) routed post-genesis via the
- * selector timelock — total 103.
+ * bridge=14, permit2=3, referral=4, permit2Referral=3,
+ * cohortRecorder=15, cohortBridgeHook=3, cohortMoveHook=2,
+ * cohortFlush=4, cohortFlushPolicy=9, multicall=1, queueAdmin=3,
+ * queueJoinLeave=5, queueFulfill=4, queueView=10, autoCompound=7
+ * (4 functions + the 3 shard getters, which the frozen live
+ * dispatcher cannot serve); total 156, of which 96 are wired at
+ * genesis (the genesis era admin group had 27; `setCohortSyncEnabled`
+ * and the referral registry pointer six, propose/execute/cancel plus
+ * the three routed getters backing the slot 77 shard's `internal`
+ * fields, ship with the registry round's AdminFacet redeploy, and
+ * the flush hub pointer six with the flush round's). The autoCompound
+ * group was routed post genesis through the selector timelock and is
+ * routed again by the registry round (its thirteenth batch) so the
+ * live facet carries the cohort sync and credit stubs.
+ * The referral groups (referral=4, permit2Referral=3), the
+ * cohortRecorder, cohortBridgeHook and cohortMoveHook groups are
+ * post launch: installed exclusively by the registry upgrade script,
+ * never by the genesis deploy scripts, so the genesis wiring stays
+ * identical to what is live in production.
+ * The cohortFlush group is post launch and not yet installed: the
+ * flush transport's two payable entrypoints, the fee quote and the
+ * envelope preview, shipped by {UpgradeCohortFlush} together with
+ * the grown AdminFacet and the settle aware {CohortHookFacet}; the
+ * group's policy and read half (the three policy setters behind
+ * master, the batched cursor reader and the five routed views
+ * backing the slot 83 shard's `internal` fields) rides its own facet
+ * ({CohortFlushPolicyFacet}, the cohortFlushPolicy group, same
+ * upgrade) so the transport facet stays inside the EIP-170 runtime
+ * budget. `applyTransferHook` and the slot 45 `applyCohort*`
+ * entrypoints other than the forwarded move pair are deliberately
+ * absent from every group: {CohortHookFacet} is reached only through
+ * the `transferHookFacet` pointer, never the dispatcher. That pointer
+ * only register holds seven entrypoints (the same chain move carry
+ * pair `applyCohortMoveOut` / `applyCohortMoveIn` and the flush
+ * transport's `applyCohortSettle` among them). The pointer facet
+ * keeps forwarders for the move pair whose bodies live in the
+ * dispatcher routed {CohortMoveHookFacet}, so the two move selectors
+ * also appear in a routed group (cohortMoveHook). The cross chain
+ * engine slice ({CohortBridgeHookFacet}: `applyCohortFlip` and the
+ * bridge carry pair) is dispatcher routed too (the engine outgrew one
+ * EIP-170 deployment), but its three selectors, like the two routed
+ * move selectors, still revert on any direct external call (the
+ * transient `hookExecuting` bracket only closes around the vault's
+ * own internal dispatch), so the externally reachable surface grows
+ * only by `receiveReferrerFlip` (registry only caller).
+ *
+ * `_referralSelectors` includes the routed `getReferrerOf` view (the
+ * registry reading replacement for the retired slot 67 auto getter):
+ * the live diamond keeps its genesis bytecode, so every post genesis
+ * read surface must be routed to a facet explicitly; same story as
+ * the six pointer selectors in the admin group.
+ *
+ * `_legacyReferralBridgeSelectors` is not a routed group but the
+ * genesis passthrough pair inside `_bridgeSelectors`
+ * (`bridgeToVaultWithReferral`, `quoteBridgeFeeWithReferral`): once
+ * the recorder is armed the vault authors the bridge attachment
+ * itself and both bridge entrypoints send identical wires, so
+ * {UpgradeReferralRegistry} retires the pair to the zero facet after
+ * its round through the same timelock; the counts above still
+ * include them.
  */
 library WiseSovrenNodesDiamondSelectors {
 
-    function adminSelectors()
+    function _adminSelectors()
         internal
         pure
         returns (bytes4[] memory sels)
     {
-        sels = new bytes4[](27);
+        sels = new bytes4[](40);
         sels[0] = AdminFacet.disAllowSupplyChangeByOwner.selector;
         sels[1] = AdminFacet.mintSupply.selector;
         sels[2] = AdminFacet.burnSupply.selector;
@@ -98,9 +160,95 @@ library WiseSovrenNodesDiamondSelectors {
         sels[24] = AdminFacet.cancelDepositHookFacetChange.selector;
         sels[25] = AdminFacet.setDepositAccumWindow.selector;
         sels[26] = AdminFacet.setSweeper.selector;
+        sels[27] = AdminFacet.setCohortSyncEnabled.selector;
+        sels[28] = AdminFacet.proposeReferralRegistry.selector;
+        sels[29] = AdminFacet.executeReferralRegistryChange.selector;
+        sels[30] = AdminFacet.cancelReferralRegistryChange.selector;
+        sels[31] = AdminFacet.getReferralRegistry.selector;
+        sels[32] = AdminFacet.getProposedReferralRegistry.selector;
+        sels[33] = AdminFacet.getReferralRegistryChangeQueuedAt.selector;
+        sels[34] = AdminFacet.proposeFlushHub.selector;
+        sels[35] = AdminFacet.executeFlushHubChange.selector;
+        sels[36] = AdminFacet.cancelFlushHubChange.selector;
+        sels[37] = AdminFacet.getFlushHub.selector;
+        sels[38] = AdminFacet.getProposedFlushHub.selector;
+        sels[39] = AdminFacet.getFlushHubChangeQueuedAt.selector;
     }
 
-    function proxySelectors()
+    function _cohortRecorderSelectors()
+        internal
+        pure
+        returns (bytes4[] memory sels)
+    {
+        sels = new bytes4[](15);
+        sels[0] = CohortRecorderFacet.syncReferee.selector;
+        sels[1] = CohortRecorderFacet.advanceBook.selector;
+        sels[2] = CohortRecorderFacet.getTrackedContribution.selector;
+        sels[3] = CohortRecorderFacet.getCohortBook.selector;
+        sels[4] = CohortRecorderFacet.getCohortScore.selector;
+        sels[5] = CohortRecorderFacet.getCohortRings.selector;
+        sels[6] = CohortRecorderFacet.getCohortWeekCrumb.selector;
+        sels[7] = CohortRecorderFacet.getCohortGapLogLength.selector;
+        sels[8] = CohortRecorderFacet.getCohortGapLogEntry.selector;
+        sels[9] = CohortRecorderFacet.getCohortSyncEnabled.selector;
+        sels[10] = CohortRecorderFacet.receiveReferrerFlip.selector;
+        sels[11] = CohortRecorderFacet.seedCohortContribution.selector;
+        sels[12] = CohortRecorderFacet.getCohortWeekCrumbs.selector;
+        sels[13] = CohortRecorderFacet.getAttributedContribution.selector;
+        sels[14] = CohortRecorderFacet.getCohortSelfCrumb.selector;
+    }
+
+    function _cohortBridgeHookSelectors()
+        internal
+        pure
+        returns (bytes4[] memory sels)
+    {
+        sels = new bytes4[](3);
+        sels[0] = CohortBridgeHookFacet.applyCohortFlip.selector;
+        sels[1] = CohortBridgeHookFacet.applyCohortBridgeOut.selector;
+        sels[2] = CohortBridgeHookFacet.applyCohortBridgeIn.selector;
+    }
+
+    function _cohortMoveHookSelectors()
+        internal
+        pure
+        returns (bytes4[] memory sels)
+    {
+        sels = new bytes4[](2);
+        sels[0] = CohortMoveHookFacet.applyCohortMoveOut.selector;
+        sels[1] = CohortMoveHookFacet.applyCohortMoveIn.selector;
+    }
+
+    function _cohortFlushSelectors()
+        internal
+        pure
+        returns (bytes4[] memory sels)
+    {
+        sels = new bytes4[](4);
+        sels[0] = CohortFlushFacet.flushReferrals.selector;
+        sels[1] = CohortFlushFacet.flushReferralWindow.selector;
+        sels[2] = CohortFlushFacet.quoteFlushFee.selector;
+        sels[3] = CohortFlushFacet.previewFlushEnvelope.selector;
+    }
+
+    function _cohortFlushPolicySelectors()
+        internal
+        pure
+        returns (bytes4[] memory sels)
+    {
+        sels = new bytes4[](9);
+        sels[0] = CohortFlushPolicyFacet.setAllowedFlushBot.selector;
+        sels[1] = CohortFlushPolicyFacet.setPublicFlushEnabled.selector;
+        sels[2] = CohortFlushPolicyFacet.setFlushGasLimit.selector;
+        sels[3] = CohortFlushPolicyFacet.getFlushedThroughWeek.selector;
+        sels[4] = CohortFlushPolicyFacet.getFlushGapCursor.selector;
+        sels[5] = CohortFlushPolicyFacet.getAllowedFlushBot.selector;
+        sels[6] = CohortFlushPolicyFacet.getPublicFlushEnabled.selector;
+        sels[7] = CohortFlushPolicyFacet.getFlushGasLimit.selector;
+        sels[8] = CohortFlushPolicyFacet.getFlushCursors.selector;
+    }
+
+    function _proxySelectors()
         internal
         pure
         returns (bytes4[] memory sels)
@@ -111,7 +259,7 @@ library WiseSovrenNodesDiamondSelectors {
         sels[2] = ProxyFacet.decreaseProxyBalance.selector;
     }
 
-    function userSelectors()
+    function _userSelectors()
         internal
         pure
         returns (bytes4[] memory sels)
@@ -127,7 +275,7 @@ library WiseSovrenNodesDiamondSelectors {
         sels[7] = UserFacet.moveMyInterestTo.selector;
     }
 
-    function sweepSelectors()
+    function _sweepSelectors()
         internal
         pure
         returns (bytes4[] memory sels)
@@ -137,7 +285,7 @@ library WiseSovrenNodesDiamondSelectors {
         sels[1] = SweepFacet.getOverhang.selector;
     }
 
-    function cashedInterestSelectors()
+    function _cashedInterestSelectors()
         internal
         pure
         returns (bytes4[] memory sels)
@@ -146,7 +294,7 @@ library WiseSovrenNodesDiamondSelectors {
         sels[0] = CashedInterestFacet.getTotalCashedInterest.selector;
     }
 
-    function queueForecastSelectors()
+    function _queueForecastSelectors()
         internal
         pure
         returns (bytes4[] memory sels)
@@ -155,7 +303,7 @@ library WiseSovrenNodesDiamondSelectors {
         sels[0] = QueueForecastFacet.solveForAmountAfterFulfill.selector;
     }
 
-    function interestAdminSelectors()
+    function _interestAdminSelectors()
         internal
         pure
         returns (bytes4[] memory sels)
@@ -166,7 +314,7 @@ library WiseSovrenNodesDiamondSelectors {
         sels[2] = InterestAdminFacet.syncInterestBulk.selector;
     }
 
-    function rescueSelectors()
+    function _rescueSelectors()
         internal
         pure
         returns (bytes4[] memory sels)
@@ -175,7 +323,22 @@ library WiseSovrenNodesDiamondSelectors {
         sels[0] = RescueFacet.rescueToken.selector;
     }
 
-    function burnWiseSelectors()
+    function _autoCompoundSelectors()
+        internal
+        pure
+        returns (bytes4[] memory sels)
+    {
+        sels = new bytes4[](7);
+        sels[0] = AutoCompoundFacet.compoundInterestOnBehalf.selector;
+        sels[1] = AutoCompoundFacet.setAutoCompoundAllowed.selector;
+        sels[2] = AutoCompoundFacet.setAutoCompoundBot.selector;
+        sels[3] = AutoCompoundFacet.setAutoCompoundFeeBps.selector;
+        sels[4] = IAutoCompoundGetters.isAutoCompoundBot.selector;
+        sels[5] = IAutoCompoundGetters.autoCompoundAllowed.selector;
+        sels[6] = IAutoCompoundGetters.autoCompoundFeeBps.selector;
+    }
+
+    function _burnWiseSelectors()
         internal
         pure
         returns (bytes4[] memory sels)
@@ -186,7 +349,7 @@ library WiseSovrenNodesDiamondSelectors {
         sels[2] = BurnWiseFacet.getNextBurnPercentage.selector;
     }
 
-    function moveSelectors()
+    function _moveSelectors()
         internal
         pure
         returns (bytes4[] memory sels)
@@ -201,7 +364,7 @@ library WiseSovrenNodesDiamondSelectors {
         sels[6] = MoveFacet.getMoveableBalance.selector;
     }
 
-    function bridgeSelectors()
+    function _bridgeSelectors()
         internal
         pure
         returns (bytes4[] memory sels)
@@ -223,7 +386,17 @@ library WiseSovrenNodesDiamondSelectors {
         sels[13] = BridgeFacet.setBridgeGasLimit.selector;
     }
 
-    function permit2Selectors()
+    function _legacyReferralBridgeSelectors()
+        internal
+        pure
+        returns (bytes4[] memory sels)
+    {
+        sels = new bytes4[](2);
+        sels[0] = BridgeFacet.bridgeToVaultWithReferral.selector;
+        sels[1] = BridgeFacet.quoteBridgeFeeWithReferral.selector;
+    }
+
+    function _permit2Selectors()
         internal
         pure
         returns (bytes4[] memory sels)
@@ -234,7 +407,30 @@ library WiseSovrenNodesDiamondSelectors {
         sels[2] = Permit2UserFacet.depositAndCompoundInterestWithPermit2.selector;
     }
 
-    function multicallSelectors()
+    function _referralSelectors()
+        internal
+        pure
+        returns (bytes4[] memory sels)
+    {
+        sels = new bytes4[](4);
+        sels[0] = ReferralFacet.depositWithReferral.selector;
+        sels[1] = ReferralFacet.depositAndClaimInterestWithReferral.selector;
+        sels[2] = ReferralFacet.depositAndCompoundInterestWithReferral.selector;
+        sels[3] = ReferralFacet.getReferrerOf.selector;
+    }
+
+    function _permit2ReferralSelectors()
+        internal
+        pure
+        returns (bytes4[] memory sels)
+    {
+        sels = new bytes4[](3);
+        sels[0] = Permit2ReferralFacet.depositWithPermit2WithReferral.selector;
+        sels[1] = Permit2ReferralFacet.depositAndClaimInterestWithPermit2WithReferral.selector;
+        sels[2] = Permit2ReferralFacet.depositAndCompoundInterestWithPermit2WithReferral.selector;
+    }
+
+    function _multicallSelectors()
         internal
         pure
         returns (bytes4[] memory sels)
@@ -243,7 +439,7 @@ library WiseSovrenNodesDiamondSelectors {
         sels[0] = MulticallFacet.multicall.selector;
     }
 
-    function queueAdminSelectors()
+    function _queueAdminSelectors()
         internal
         pure
         returns (bytes4[] memory sels)
@@ -254,7 +450,7 @@ library WiseSovrenNodesDiamondSelectors {
         sels[2] = QueueAdminFacet.setIncentivesAllowed.selector;
     }
 
-    function queueJoinLeaveSelectors()
+    function _queueJoinLeaveSelectors()
         internal
         pure
         returns (bytes4[] memory sels)
@@ -267,7 +463,7 @@ library WiseSovrenNodesDiamondSelectors {
         sels[4] = QueueJoinLeaveFacet.switchQueIncentivePartial.selector;
     }
 
-    function queueFulfillSelectors()
+    function _queueFulfillSelectors()
         internal
         pure
         returns (bytes4[] memory sels)
@@ -279,7 +475,7 @@ library WiseSovrenNodesDiamondSelectors {
         sels[3] = QueueFulfillFacet.compoundInterestViaFulfillBulk.selector;
     }
 
-    function queueViewSelectors()
+    function _queueViewSelectors()
         internal
         pure
         returns (bytes4[] memory sels)
@@ -295,20 +491,5 @@ library WiseSovrenNodesDiamondSelectors {
         sels[7] = WiseSovrenNodesQueueHelper._solveForAmountWithIncentive.selector;
         sels[8] = WiseSovrenNodesQueueUIHelper.getAllOrdersOverallWithId.selector;
         sels[9] = WiseSovrenNodesQueueUIHelper.getAllOrdersfromAddressWithId.selector;
-    }
-
-    function autoCompoundSelectors()
-        internal
-        pure
-        returns (bytes4[] memory sels)
-    {
-        sels = new bytes4[](7);
-        sels[0] = AutoCompoundFacet.compoundInterestOnBehalf.selector;
-        sels[1] = AutoCompoundFacet.setAutoCompoundAllowed.selector;
-        sels[2] = AutoCompoundFacet.setAutoCompoundBot.selector;
-        sels[3] = AutoCompoundFacet.setAutoCompoundFeeBps.selector;
-        sels[4] = IAutoCompoundGetters.isAutoCompoundBot.selector;
-        sels[5] = IAutoCompoundGetters.autoCompoundAllowed.selector;
-        sels[6] = IAutoCompoundGetters.autoCompoundFeeBps.selector;
     }
 }

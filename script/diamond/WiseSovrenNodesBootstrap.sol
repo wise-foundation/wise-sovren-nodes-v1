@@ -135,103 +135,103 @@ contract WiseSovrenNodesBootstrap {
         _wireOne(
             _diamond,
             _facets.admin,
-            WiseSovrenNodesDiamondSelectors.adminSelectors()
+            WiseSovrenNodesDiamondSelectors._adminSelectors()
         );
 
         _wireOne(
             _diamond,
             _facets.proxy,
-            WiseSovrenNodesDiamondSelectors.proxySelectors()
+            WiseSovrenNodesDiamondSelectors._proxySelectors()
         );
 
         _wireOne(
             _diamond,
             _facets.user,
-            WiseSovrenNodesDiamondSelectors.userSelectors()
+            WiseSovrenNodesDiamondSelectors._userSelectors()
         );
 
         _wireOne(
             _diamond,
             _facets.sweep,
-            WiseSovrenNodesDiamondSelectors.sweepSelectors()
+            WiseSovrenNodesDiamondSelectors._sweepSelectors()
         );
 
         _wireOne(
             _diamond,
             _facets.cashedInterest,
-            WiseSovrenNodesDiamondSelectors.cashedInterestSelectors()
+            WiseSovrenNodesDiamondSelectors._cashedInterestSelectors()
         );
 
         _wireOne(
             _diamond,
             _facets.burnWise,
-            WiseSovrenNodesDiamondSelectors.burnWiseSelectors()
+            WiseSovrenNodesDiamondSelectors._burnWiseSelectors()
         );
 
         _wireOne(
             _diamond,
             _facets.move,
-            WiseSovrenNodesDiamondSelectors.moveSelectors()
+            WiseSovrenNodesDiamondSelectors._moveSelectors()
         );
 
         _wireOne(
             _diamond,
             _facets.bridge,
-            WiseSovrenNodesDiamondSelectors.bridgeSelectors()
+            WiseSovrenNodesDiamondSelectors._bridgeSelectors()
         );
 
         _wireOne(
             _diamond,
             _facets.permit2,
-            WiseSovrenNodesDiamondSelectors.permit2Selectors()
+            WiseSovrenNodesDiamondSelectors._permit2Selectors()
         );
 
         _wireOne(
             _diamond,
             _facets.multicall,
-            WiseSovrenNodesDiamondSelectors.multicallSelectors()
+            WiseSovrenNodesDiamondSelectors._multicallSelectors()
         );
 
         _wireOne(
             _diamond,
             _facets.queueAdmin,
-            WiseSovrenNodesDiamondSelectors.queueAdminSelectors()
+            WiseSovrenNodesDiamondSelectors._queueAdminSelectors()
         );
 
         _wireOne(
             _diamond,
             _facets.queueJoinLeave,
-            WiseSovrenNodesDiamondSelectors.queueJoinLeaveSelectors()
+            WiseSovrenNodesDiamondSelectors._queueJoinLeaveSelectors()
         );
 
         _wireOne(
             _diamond,
             _facets.queueFulfill,
-            WiseSovrenNodesDiamondSelectors.queueFulfillSelectors()
+            WiseSovrenNodesDiamondSelectors._queueFulfillSelectors()
         );
 
         _wireOne(
             _diamond,
             _facets.queueView,
-            WiseSovrenNodesDiamondSelectors.queueViewSelectors()
+            WiseSovrenNodesDiamondSelectors._queueViewSelectors()
         );
 
         _wireOne(
             _diamond,
             _facets.queueForecast,
-            WiseSovrenNodesDiamondSelectors.queueForecastSelectors()
+            WiseSovrenNodesDiamondSelectors._queueForecastSelectors()
         );
 
         _wireOne(
             _diamond,
             _facets.interestAdmin,
-            WiseSovrenNodesDiamondSelectors.interestAdminSelectors()
+            WiseSovrenNodesDiamondSelectors._interestAdminSelectors()
         );
 
         _wireOne(
             _diamond,
             _facets.rescue,
-            WiseSovrenNodesDiamondSelectors.rescueSelectors()
+            WiseSovrenNodesDiamondSelectors._rescueSelectors()
         );
     }
 
