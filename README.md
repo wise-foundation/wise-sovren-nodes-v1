@@ -103,3 +103,15 @@ the legacy bridge pair retirement). The registry and hub sources under `test/ref
 compiled here only so the vault suites run against the real shared code; they are never
 deployed from this repository. `test/diamond/fork/WiseSovrenNodesReferralUpgradeFork.t.sol`
 rehearses the whole join on a mainnet fork.
+
+A third round replaces the routed flush facet of the running vault with the build that lets an
+allowed flush bot open a book nobody has flushed yet, so a referrer no longer has to flush once
+itself before the couriers may carry its book. It changes no storage, no selector and no hook.
+The new facet takes over the four flush selectors through one more three day clock:
+
+```bash
+VAULT_PRODUCT=usdc forge script script/diamond/UpgradeCohortFlushCourier.s.sol --sig "propose()" --rpc-url mainnet
+```
+
+`test/diamond/fork/WiseSovrenNodesCourierOpenFork.t.sol` rehearses that round against the live
+mainnet state, driving the script itself.

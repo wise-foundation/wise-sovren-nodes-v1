@@ -277,9 +277,11 @@ contract FlushRefundRejector {
  * header, entry, scores, designation, crumb pairs and pre-sliced gap
  * records word by word. Cursor behavior (catch-up window start,
  * ~104-week advance per flush, gap-record slicing across flushes,
- * work-budget degradation to entries without crumbs, a third-party
- * batch writing no cursor while the stored one is virgin and
- * advancing it once the referrer's own flush has set it) is pinned
+ * work-budget degradation to entries without crumbs, an allowed bot's
+ * batch opening a book whose cursors are unset exactly as the owner's
+ * batch would and writing nothing once a cursor is stored, a public
+ * flush caller's batch and every third party window writing nothing)
+ * is pinned
  * against real recorder histories, never hand-built words. The window
  * entrypoint is additionally exercised in CCIP mode (payable fee and
  * exact-excess refund, envelope restricted to the requested slice
@@ -2196,7 +2198,7 @@ contract WiseSovrenNodesCohortFlushTest is DiamondTestHarness, HubDiamondHarness
         );
     }
 
-    function test_RevertWhen_flushReferrals_thirdPartyBatchOnVirginCursor_refused()
+    function test_flushReferrals_botBatchOnVirginCursor_opensBook()
         public
     {
         _flushPolicy(diamond).setAllowedFlushBot(
@@ -2215,12 +2217,23 @@ contract WiseSovrenNodesCohortFlushTest is DiamondTestHarness, HubDiamondHarness
             BASE_TIME + 2 weeks
         );
 
-        vm.prank(
-            bot
+        vm.expectEmit(
+            true,
+            false,
+            false,
+            true,
+            address(diamond)
         );
 
-        vm.expectRevert(
-            WiseSovrenNodesDiamondErrors.FlushCursorVirgin.selector
+        emit CohortReferrerFlushed(
+            refA,
+            3_001,
+            0,
+            0
+        );
+
+        vm.prank(
+            bot
         );
 
         _flush(diamond).flushReferrals(
@@ -2231,6 +2244,248 @@ contract WiseSovrenNodesCohortFlushTest is DiamondTestHarness, HubDiamondHarness
 
         assertEq(
             _flushPolicy(diamond).getFlushedThroughWeek(
+                refA
+            ),
+            3_001
+        );
+
+        assertGt(
+            hub.claimable(
+                block.chainid,
+                refA
+            ),
+            0
+        );
+    }
+
+    function test_flushReferrals_botBatchAfterBotOpen_shipsAboveStoredCursor()
+        public
+    {
+        _flushPolicy(rdiamond).setAllowedFlushBot(
+            bot,
+            true
+        );
+
+        _depositWithReferralOn(
+            rdiamond,
+            user1,
+            10_000 * 1e6,
+            refA
+        );
+
+        vm.warp(
+            BASE_TIME + 2 weeks
+        );
+
+        vm.deal(
+            bot,
+            1 ether
+        );
+
+        vm.prank(
+            bot
+        );
+
+        _flush(rdiamond).flushReferrals{value: FIXED_FEE}(
+            _oneRef(
+                refA
+            )
+        );
+
+        assertEq(
+            _flushPolicy(rdiamond).getFlushedThroughWeek(
+                refA
+            ),
+            3_001
+        );
+
+        vm.warp(
+            BASE_TIME + 5 weeks
+        );
+
+        vm.recordLogs();
+
+        vm.prank(
+            bot
+        );
+
+        _flush(rdiamond).flushReferrals{value: FIXED_FEE}(
+            _oneRef(
+                refA
+            )
+        );
+
+        assertEq(
+            _countReferrerFlushedLogs(),
+            0
+        );
+
+        assertEq(
+            _flushPolicy(rdiamond).getFlushedThroughWeek(
+                refA
+            ),
+            3_001
+        );
+
+        bytes memory data = router.lastData();
+
+        assertEq(
+            CohortFlushCodec._flushEntryCrumbCount(
+                _envWord(
+                    data,
+                    1
+                )
+            ),
+            3
+        );
+
+        assertEq(
+            _envWord(
+                data,
+                2
+            ),
+            3_002
+        );
+    }
+
+    function test_flushReferrals_ownBatchOnVirginCursor_writesCursor()
+        public
+    {
+        _depositWithReferralOn(
+            diamond,
+            user1,
+            10_000 * 1e6,
+            refA
+        );
+
+        vm.warp(
+            BASE_TIME + 2 weeks
+        );
+
+        vm.expectEmit(
+            true,
+            false,
+            false,
+            true,
+            address(diamond)
+        );
+
+        emit CohortReferrerFlushed(
+            refA,
+            3_001,
+            0,
+            0
+        );
+
+        _flushOwnLocal(
+            refA
+        );
+
+        assertEq(
+            _flushPolicy(diamond).getFlushedThroughWeek(
+                refA
+            ),
+            3_001
+        );
+    }
+
+    function test_flushReferrals_publicFlushOnVirginCursor_writesNoCursor()
+        public
+    {
+        _flushPolicy(diamond).setPublicFlushEnabled(
+            true
+        );
+
+        _depositWithReferralOn(
+            diamond,
+            user1,
+            10_000 * 1e6,
+            refA
+        );
+
+        vm.warp(
+            BASE_TIME + 2 weeks
+        );
+
+        vm.recordLogs();
+
+        vm.prank(
+            stranger
+        );
+
+        _flush(diamond).flushReferrals(
+            _oneRef(
+                refA
+            )
+        );
+
+        assertEq(
+            _countReferrerFlushedLogs(),
+            0
+        );
+
+        assertEq(
+            _flushPolicy(diamond).getFlushedThroughWeek(
+                refA
+            ),
+            0
+        );
+
+        assertGt(
+            hub.claimable(
+                block.chainid,
+                refA
+            ),
+            0
+        );
+    }
+
+    function test_flushReferralWindow_botWindowOnVirginCursor_writesNoCursor()
+        public
+    {
+        _flushPolicy(diamond).setAllowedFlushBot(
+            bot,
+            true
+        );
+
+        _depositWithReferralOn(
+            diamond,
+            user1,
+            10_000 * 1e6,
+            refA
+        );
+
+        vm.warp(
+            BASE_TIME + 2 weeks
+        );
+
+        vm.recordLogs();
+
+        vm.prank(
+            bot
+        );
+
+        _flush(diamond).flushReferralWindow(
+            refA,
+            3_000,
+            0
+        );
+
+        assertEq(
+            _countReferrerFlushedLogs(),
+            0
+        );
+
+        assertEq(
+            _flushPolicy(diamond).getFlushedThroughWeek(
+                refA
+            ),
+            0
+        );
+
+        assertGt(
+            hub.claimable(
+                block.chainid,
                 refA
             ),
             0
@@ -2315,7 +2570,7 @@ contract WiseSovrenNodesCohortFlushTest is DiamondTestHarness, HubDiamondHarness
         );
     }
 
-    function test_RevertWhen_flushReferrals_mixedBatchForeignVirgin_refusesWholeBatch()
+    function test_flushReferrals_botBatchMixedVirgin_opensForeignAndOwnBooks()
         public
     {
         _flushPolicy(diamond).setAllowedFlushBot(
@@ -2351,12 +2606,10 @@ contract WiseSovrenNodesCohortFlushTest is DiamondTestHarness, HubDiamondHarness
             refs
         );
 
+        vm.recordLogs();
+
         vm.prank(
             bot
-        );
-
-        vm.expectRevert(
-            WiseSovrenNodesDiamondErrors.FlushCursorVirgin.selector
         );
 
         _flush(diamond).flushReferrals(
@@ -2364,21 +2617,26 @@ contract WiseSovrenNodesCohortFlushTest is DiamondTestHarness, HubDiamondHarness
         );
 
         assertEq(
+            _countReferrerFlushedLogs(),
+            2
+        );
+
+        assertEq(
             _flushPolicy(diamond).getFlushedThroughWeek(
                 refA
             ),
-            0
+            3_001
         );
 
         assertEq(
             _flushPolicy(diamond).getFlushedThroughWeek(
                 bot
             ),
-            0
+            3_001
         );
     }
 
-    function test_RevertWhen_flushReferrals_thirdPartyBatchOnVirginCursor_gapBook_refused()
+    function test_flushReferrals_botBatchOnVirginCursor_gapBook_writesWhatOwnBatchWould()
         public
     {
         _flushPolicy(diamond).setAllowedFlushBot(
@@ -2406,12 +2664,36 @@ contract WiseSovrenNodesCohortFlushTest is DiamondTestHarness, HubDiamondHarness
             3_358 weeks + 5 hours
         );
 
-        vm.prank(
-            bot
+        uint256 snapshot = vm.snapshotState();
+
+        _flushOwnLocal(
+            refA
         );
 
-        vm.expectRevert(
-            WiseSovrenNodesDiamondErrors.FlushCursorVirgin.selector
+        uint256 ownThrough = _flushPolicy(diamond).getFlushedThroughWeek(
+            refA
+        );
+
+        (
+            uint256 ownGapIndex,
+            uint256 ownGapResume
+        ) = _flushPolicy(diamond).getFlushGapCursor(
+            refA
+        );
+
+        uint256 ownClaimable = hub.claimable(
+            block.chainid,
+            refA
+        );
+
+        vm.revertToState(
+            snapshot
+        );
+
+        vm.recordLogs();
+
+        vm.prank(
+            bot
         );
 
         _flush(diamond).flushReferrals(
@@ -2421,10 +2703,45 @@ contract WiseSovrenNodesCohortFlushTest is DiamondTestHarness, HubDiamondHarness
         );
 
         assertEq(
+            _countReferrerFlushedLogs(),
+            1
+        );
+
+        assertEq(
+            ownThrough,
+            3_357
+        );
+
+        assertEq(
             _flushPolicy(diamond).getFlushedThroughWeek(
                 refA
             ),
-            0
+            ownThrough
+        );
+
+        (
+            uint256 gapIndex,
+            uint256 gapResume
+        ) = _flushPolicy(diamond).getFlushGapCursor(
+            refA
+        );
+
+        assertEq(
+            gapIndex,
+            ownGapIndex
+        );
+
+        assertEq(
+            gapResume,
+            ownGapResume
+        );
+
+        assertEq(
+            hub.claimable(
+                block.chainid,
+                refA
+            ),
+            ownClaimable
         );
     }
 
