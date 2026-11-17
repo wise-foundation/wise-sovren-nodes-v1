@@ -215,8 +215,6 @@ abstract contract WiseSovrenNodesDiamondErrors {
 
     error FlushOutageGraceActive();
 
-    error FlushCursorVirgin();
-
     error FlushCadenceActive();
 
     error FlushBookNotAdvanced();

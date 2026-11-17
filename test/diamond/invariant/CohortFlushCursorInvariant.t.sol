@@ -141,8 +141,9 @@ contract FlushCursorRouter {
  * cursor each entry would store), so every deviation between the
  * shipped envelope, the stored cursors and the pre-state is a sticky
  * violation the invariants read. Ghost state: the last observed
- * cursors per referrer (monotonicity), whether the referrer's own
- * flush has ever run (the virgin rule), the largest word any envelope
+ * cursors per referrer (monotonicity), whether a cursor writing flush
+ * has opened the book (the referrer's own flush or an allowed bot's
+ * batch, the opening rule), the largest word any envelope
  * carried per (referrer, week) (the stranding rule requires the final
  * word of every closed week a batch cursor advance passes), every
  * closed week the referrer's OWN flush shipped (the re-send rule),
@@ -237,11 +238,11 @@ contract CohortFlushCursorHandler is Test {
 
     mapping(address => uint256) public ghostGapResume;
 
-    mapping(address => bool) public ghostOwnFlushed;
+    mapping(address => bool) public ghostOpened;
 
     mapping(address => mapping(uint256 => bool)) public ghostShipped;
 
-    mapping(address => mapping(uint256 => bool)) public ghostOwnShippedClosed;
+    mapping(address => mapping(uint256 => bool)) public ghostWriterShippedClosed;
 
     uint256 public ghostMonotoneViolations;
 
@@ -257,13 +258,13 @@ contract CohortFlushCursorHandler is Test {
 
     uint256 public ghostWindowPredicateViolations;
 
-    uint256 public ghostOwnWeekResendViolations;
+    uint256 public ghostWriterWeekResendViolations;
 
     uint256 public flushCount;
 
     uint256 public windowRefusals;
 
-    uint256 public thirdPartyWrites;
+    uint256 public courierOpens;
 
     uint256 public acceptedThirdPartyWindows;
 
@@ -276,7 +277,6 @@ contract CohortFlushCursorHandler is Test {
     uint256 public callerRefusals;
 
     uint256 public outageRefusals;
-    uint256 public laneRefusals;
 
     uint256 public designations;
 
@@ -1309,20 +1309,6 @@ contract CohortFlushCursorHandler is Test {
             );
         } catch (bytes memory reason) {
 
-            if (_laneRefused(reason)) {
-
-                ++laneRefusals;
-
-                vm.recordLogs();
-
-                _assertUnchanged(
-                    _batch,
-                    snaps
-                );
-
-                return;
-            }
-
             assembly {
                 revert(add(reason, 32), mload(reason))
             }
@@ -1359,18 +1345,23 @@ contract CohortFlushCursorHandler is Test {
         }
     }
 
-    function _laneRefused(
-        bytes memory _reason
+    function _writesCursors(
+        FlushCall memory _call,
+        address _referrer,
+        CursorSnap memory _snap
     )
         internal
-        pure
+        view
         returns (bool)
     {
-        return keccak256(_reason) == keccak256(
-            abi.encodeWithSelector(
-                WiseSovrenNodesDiamondErrors.FlushCursorVirgin.selector
-            )
-        );
+        return _call.caller == _referrer
+            || (
+                _call.isWindow == false
+                    && _snap.through == 0
+                    && flushPolicy.getAllowedFlushBot(
+                        _call.caller
+                    )
+            );
     }
 
     function _runWindow(
@@ -1471,11 +1462,7 @@ contract CohortFlushCursorHandler is Test {
                 )
             );
 
-            if (_laneRefused(reason)) {
-
-                ++laneRefusals;
-
-            } else if (
+            if (
                 expectAccepted
                     || (windowStartRefusal == false && outageRefusal == false)
             ) {
@@ -1692,7 +1679,11 @@ contract CohortFlushCursorHandler is Test {
             ++ghostPlanMirrorViolations;
         }
 
-        bool own = _check.flushCall.caller == _check.referrer;
+        bool writes = _writesCursors(
+            _check.flushCall,
+            _check.referrer,
+            _check.snap
+        );
 
         for (uint256 k; k < _crumbCount; ++k) {
 
@@ -1718,7 +1709,7 @@ contract CohortFlushCursorHandler is Test {
                 _check.referrer,
                 week,
                 _word(_check.data, cursor + 1) & ~CohortWeeks.CRUMB_WRITTEN_BIT,
-                own,
+                writes,
                 week < _check.flushCall.currentWeek
             );
 
@@ -1741,7 +1732,11 @@ contract CohortFlushCursorHandler is Test {
             ++ghostPlanMirrorViolations;
         }
 
-        bool own = _check.flushCall.caller == _check.referrer;
+        bool writes = _writesCursors(
+            _check.flushCall,
+            _check.referrer,
+            _check.snap
+        );
 
         for (uint256 k; k < _gapCount; ++k) {
 
@@ -1775,7 +1770,7 @@ contract CohortFlushCursorHandler is Test {
                     _check.referrer,
                     week,
                     0,
-                    own,
+                    writes,
                     true
                 );
             }
@@ -1789,9 +1784,13 @@ contract CohortFlushCursorHandler is Test {
         EntryPlan memory _plan
     )
         internal
-        pure
+        view
     {
-        bool writes = _check.flushCall.caller == _check.referrer;
+        bool writes = _writesCursors(
+            _check.flushCall,
+            _check.referrer,
+            _check.snap
+        );
 
         if (writes == false) {
             return;
@@ -1865,7 +1864,7 @@ contract CohortFlushCursorHandler is Test {
         address _referrer,
         uint256 _week,
         uint256 _shipped,
-        bool _own,
+        bool _writes,
         bool _closed
     )
         internal
@@ -1880,7 +1879,7 @@ contract CohortFlushCursorHandler is Test {
             ghostShippedWord[_referrer][_week] = _shipped;
         }
 
-        if (_own) {
+        if (_writes) {
 
             if (
                 _closed
@@ -1888,14 +1887,14 @@ contract CohortFlushCursorHandler is Test {
                         _referrer
                     )
             ) {
-                ghostOwnShippedClosed[_referrer][_week] = true;
+                ghostWriterShippedClosed[_referrer][_week] = true;
             }
 
             return;
         }
 
-        if (ghostOwnShippedClosed[_referrer][_week]) {
-            ++ghostOwnWeekResendViolations;
+        if (ghostWriterShippedClosed[_referrer][_week]) {
+            ++ghostWriterWeekResendViolations;
         }
     }
 
@@ -1966,13 +1965,20 @@ contract CohortFlushCursorHandler is Test {
 
         bool own = _call.caller == _referrer;
 
+        bool courierOpen = own == false
+            && _writesCursors(
+                _call,
+                _referrer,
+                _snap
+            );
+
         if (changed && own == false) {
 
-            if (_call.isWindow || _snap.through == 0) {
+            if (courierOpen) {
+                ++courierOpens;
+            } else {
                 ++ghostThirdPartyWriteViolations;
             }
-
-            ++thirdPartyWrites;
         }
 
         if (changed && (own == false || _call.isWindow == false)) {
@@ -1987,15 +1993,15 @@ contract CohortFlushCursorHandler is Test {
             );
         }
 
-        if (ghostOwnFlushed[_referrer] == false && own == false) {
+        if (ghostOpened[_referrer] == false && own == false && courierOpen == false) {
 
             if (stored.through != 0 || stored.gapIndex != 0 || stored.gapResume != 0) {
                 ++ghostVirginWriteViolations;
             }
         }
 
-        if (own) {
-            ghostOwnFlushed[_referrer] = true;
+        if (own || courierOpen) {
+            ghostOpened[_referrer] = true;
         }
 
         ghostThrough[_referrer] = stored.through;
@@ -3505,16 +3511,10 @@ contract CohortFlushCursorInvariantTest is DiamondTestHarness {
             "reach: fewer accepted third-party windows than the script drives"
         );
 
-        assertEq(
-            handler.thirdPartyWrites(),
-            0,
-            "lane: a third-party flush wrote a send cursor"
-        );
-
         assertGe(
-            handler.laneRefusals(),
+            handler.courierOpens(),
             1,
-            "reach: the third-party lane gates never refused a flush"
+            "reach: no allowed bot batch opened a book"
         );
 
         assertGe(
@@ -3565,9 +3565,9 @@ contract CohortFlushCursorInvariantTest is DiamondTestHarness {
 
         invariant_FC2_throughCursorBelowOpenWeek();
 
-        invariant_FC3_cursorsZeroUntilFirstOwnFlush();
+        invariant_FC3_cursorsZeroUntilTheFirstOpeningFlush();
 
-        invariant_FC4_thirdPartyWritesOnlyBatchOverStoredCursorOneLogPerChange();
+        invariant_FC4_thirdPartyWritesOnlyBotBatchOverVirginCursorOneLogPerChange();
 
         invariant_FC5_envelopeAndCursorsMirrorThePlanFromPreStateCursors();
 
@@ -3575,7 +3575,7 @@ contract CohortFlushCursorInvariantTest is DiamondTestHarness {
 
         invariant_FC7_thirdPartyWindowPredicateOnPreState();
 
-        invariant_FC8_noLaterSenderCarriesOwnShippedClosedWeek();
+        invariant_FC8_noThirdPartyCarriesAWriterShippedClosedWeek();
 
         invariant_FC9_disarmRefusesFlushAndSpanWeeksShipNothing();
     }
@@ -3670,19 +3670,19 @@ contract CohortFlushCursorInvariantTest is DiamondTestHarness {
     /// forge-config: default.invariant.runs = 64
     /// forge-config: default.invariant.depth = 40
     /// forge-config: default.invariant.fail-on-revert = true
-    function invariant_FC3_cursorsZeroUntilFirstOwnFlush()
+    function invariant_FC3_cursorsZeroUntilTheFirstOpeningFlush()
         public
         view
     {
         assertEq(
             handler.ghostVirginWriteViolations(),
             0,
-            "FC3: a cursor was written before the referrer's own flush"
+            "FC3: a cursor was written before the referrer's own flush or an allowed bot's batch"
         );
 
         for (uint256 i; i < referrers.length; ++i) {
 
-            if (handler.ghostOwnFlushed(referrers[i])) {
+            if (handler.ghostOpened(referrers[i])) {
                 continue;
             }
 
@@ -3718,14 +3718,14 @@ contract CohortFlushCursorInvariantTest is DiamondTestHarness {
     /// forge-config: default.invariant.runs = 64
     /// forge-config: default.invariant.depth = 40
     /// forge-config: default.invariant.fail-on-revert = true
-    function invariant_FC4_thirdPartyWritesOnlyBatchOverStoredCursorOneLogPerChange()
+    function invariant_FC4_thirdPartyWritesOnlyBotBatchOverVirginCursorOneLogPerChange()
         public
         view
     {
         assertEq(
             handler.ghostThirdPartyWriteViolations(),
             0,
-            "FC4: a third party wrote a cursor through a window or over a virgin cursor"
+            "FC4: a third party wrote a cursor through a window, over a stored cursor, or without being an allowed bot"
         );
 
         assertEq(
@@ -3786,14 +3786,14 @@ contract CohortFlushCursorInvariantTest is DiamondTestHarness {
     /// forge-config: default.invariant.runs = 64
     /// forge-config: default.invariant.depth = 40
     /// forge-config: default.invariant.fail-on-revert = true
-    function invariant_FC8_noLaterSenderCarriesOwnShippedClosedWeek()
+    function invariant_FC8_noThirdPartyCarriesAWriterShippedClosedWeek()
         public
         view
     {
         assertEq(
-            handler.ghostOwnWeekResendViolations(),
+            handler.ghostWriterWeekResendViolations(),
             0,
-            "FC8: another sender re-carried a closed week the referrer's own flush shipped"
+            "FC8: a third party re-carried a closed week a cursor writing flush shipped"
         );
     }
 

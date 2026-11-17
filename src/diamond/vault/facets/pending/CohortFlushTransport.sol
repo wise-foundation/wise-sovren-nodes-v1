@@ -13,19 +13,27 @@ import {IReferralFlushHub} from "../../interfaces/pending/IReferralFlushHub.sol"
 /**
  * @dev CohortFlushTransport: the flush guards, the cursor writes and the
  * hub send. A flush reverts FlushHubNotSet while the hub pointer is unset
- * and needs an armed recorder, an installed hook and a set registry. Only
- * the referrer's own flush writes its cursors, which only advance; a third
- * party waits for the first own flush, starts above both stored cursors and
- * is refused inside the outage grace that follows a reopen. The envelope
- * goes to the hub over CCIP, or directly on the hub chain, where a batch
- * takes at most LOCAL_FLUSH_ENTRIES referrers because the same transaction
- * pays the hub intake; any unused
- * fee is refunded. The deliverer the hub sees is the caller only when the
- * caller is an allowed flush bot; otherwise it
- * is zero in a CCIP header and the referrer itself on the hub chain, whose
- * intake refuses a zero deliverer. Either way only an allowlisted bot can
- * earn the courier fee, and a referrer that flushes its own book from a
- * second address earns nothing.
+ * and needs an armed recorder, an installed hook and a set registry. The
+ * referrer's own flush writes its cursors, which only advance. A batch
+ * sent by an allowed flush bot opens a book whose through week cursor is
+ * still unset, writing both cursors exactly as the referrer's own batch
+ * would (a batch always plans from the stored cursor or the lookback edge,
+ * so it skips no week), and never moves a cursor some flush already
+ * stored, so a referrer need not flush once itself before a courier can
+ * carry its book; a book older than the lookback that a courier opens
+ * keeps its older weeks deliverable by the referrer's own window only, as
+ * after the referrer's own first batch. A window sent by anyone but the
+ * referrer and a batch sent by a public flush caller write no cursor; a
+ * third party window starts above both stored cursors, and every third
+ * party is refused inside the outage grace that follows a reopen. The
+ * envelope goes to the hub over CCIP, or directly on the hub chain, where
+ * a batch takes at most LOCAL_FLUSH_ENTRIES referrers because the same
+ * transaction pays the hub intake; any unused fee is refunded. The
+ * deliverer the hub sees is the caller only when the caller is an allowed
+ * flush bot; otherwise it is zero in a CCIP header and the referrer itself
+ * on the hub chain, whose intake refuses a zero deliverer. Either way only
+ * an allowlisted bot can earn the courier fee, and a referrer that flushes
+ * its own book from a second address earns nothing.
  */
 abstract contract CohortFlushTransport is CohortFlushPlanner {
 
@@ -235,17 +243,23 @@ abstract contract CohortFlushTransport is CohortFlushPlanner {
     }
 
     function _commitFlush(
-        FlushEntryData[] memory _entries
+        FlushEntryData[] memory _entries,
+        bool _batch
     )
         internal
     {
-        _requireThirdPartyLanesClear(
-            _entries
-        );
+        bool courierBatch = _batch
+            && allowedFlushBot[msg.sender] == true;
 
         for (uint256 i; i < _entries.length; ++i) {
 
-            if (_entries[i].referrer == msg.sender) {
+            if (
+                _entries[i].referrer == msg.sender
+                    || (
+                        courierBatch
+                            && flushedThroughWeek[_entries[i].referrer] == 0
+                    )
+            ) {
                 _advanceFlushCursors(
                     _entries[i]
                 );
@@ -255,25 +269,6 @@ abstract contract CohortFlushTransport is CohortFlushPlanner {
         _dispatchFlush(
             _entries
         );
-    }
-
-    function _requireThirdPartyLanesClear(
-        FlushEntryData[] memory _entries
-    )
-        internal
-        view
-    {
-        for (uint256 i; i < _entries.length; ++i) {
-
-            if (_entries[i].referrer == msg.sender) {
-                continue;
-            }
-
-            require(
-                flushedThroughWeek[_entries[i].referrer] != 0,
-                FlushCursorVirgin()
-            );
-        }
     }
 
     function _advanceFlushCursors(

@@ -16,8 +16,10 @@ import {CohortWeeks} from "../../../shared/pending/CohortWeeks.sol";
  * (settled to the current week, or to the disarm instant while the book is
  * parked; anyone advances a book with the permissionless `advanceBook`), so
  * one call never walks more than one book's week boundaries; a single
- * referrer settles inline. The quote and preview views are no-settle lower bounds and stay
- * ungated.
+ * referrer settles inline. Only the batch lets an allowed flush bot open a
+ * book whose cursors are unset; the window never writes a cursor for
+ * anyone but the referrer. The quote and preview views are no-settle lower
+ * bounds and stay ungated.
  */
 contract CohortFlushFacet is CohortFlushTransport {
 
@@ -73,7 +75,8 @@ contract CohortFlushFacet is CohortFlushTransport {
         );
 
         _commitFlush(
-            entries
+            entries,
+            true
         );
     }
 
@@ -142,7 +145,8 @@ contract CohortFlushFacet is CohortFlushTransport {
         );
 
         _commitFlush(
-            entries
+            entries,
+            false
         );
     }
 
